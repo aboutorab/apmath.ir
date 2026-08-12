@@ -1,0 +1,14 @@
+[
+  {
+    "title": "🏠",
+    "link": "index.html"
+  },
+  {
+    "title": "تماس با من",
+    "link": "?page_slug=contact"
+  },
+   {
+    "title": "درباره من",
+    "link": "?page_slug=about"
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "title": "خانه",
+    "link": "index.html"
+  },
+  {
+    "title": "ریاضیات",
+    "link": "#",
+    "children": [
+      {
+        "title": "هندسه",
+        "link": "#",
+        "children": [
+          {
+            "title": "قضیه فیثاغورث",
+            "link": "index.html?post=pythagorean-theorem"
+          }
+        ]
+      },
+      {
+        "title": "متون ریاضی",
+        "link": "#",
+        "children": [
+          {
+            "title": "تایپ فرمول‌های ریاضی",
+            "link": "index.html?post=math-formula"
+          }
+        ]
+      },
+	  {
+        "title": "ابزارها",
+        "link": "#",
+        "children": [
+          {
+            "title": "رسم نمودار",
+            "link": "?post=plot"
+          },
+          {
+            "title": "ماشین حساب",
+            "link": "?post=calculator"
+          },
+          {
+            "title": "بازی زیک",
+            "link": "?post=zeek-game"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "درباره ما",
+    "link": "#",
+    "children": [
+      {
+        "title": "درباره من",
+        "link": "?page_slug=about"
+      },
+      {
+        "title": "تماس با من",
+        "link": "?page_slug=contact"
+      }
+    ]
+  }
+]

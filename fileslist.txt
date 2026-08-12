@@ -1,0 +1,34 @@
+blog/
+├── index.html              ← صفحه اصلی (تغییر ندهید)
+├── assets/
+│   ├── css/
+│   │   └── style.css       ← استایل‌های سایت
+│   ├── js/
+│   │   ├── date-converter.js   ← تبدیل تاریخ شمسی
+│   │   ├── blog-engine.js      ← موتور اصلی وبلاگ
+│   │   ├── search-engine.js    ← موتور جستجو
+│   │   ├── pagination.js       ← صفحه‌بندی
+│   │   ├── menu-builder.js     ← ساخت منوها
+│   │   ├── router.js           ← مسیریابی
+│   │   └── main.js             ← راه‌اندازی اولیه
+│   ├── images/             ← تصاویر عمومی
+│   │   └── back.jpg        ← تصویر پس‌زمینه هدر
+│   └── fonts/
+│       └── vazirmatn/      ← فونت فارسی وزیرمتن
+├── data/                   ← فایل‌های اطلاعات (اینجا ویرایش کنید)
+│   ├── postfiles.json      ← لیست فایل‌های JSON پست‌ها
+│   ├── 1405.json           ← اطلاعات پست‌ها
+│   ├── pages.json          ← اطلاعات صفحات ثابت
+│   ├── links.json          ← لینک‌های مفید
+│   ├── script.json         ← اسکریپت‌های خارجی کل وبلاگ
+│   ├── favorite.json       ← یادداشت‌های منتخب ⭐
+│   ├── menu.json           ← منوی اصلی (با زیرمنو)
+│   └── topmenu.json        ← منوی بالایی
+├── posts/                  ← فایل‌های HTML پست‌ها
+│   └── 1405/              ← زیرپوشه پست‌ها
+│       ├── calculator.html
+│       ├── plot.html
+│       └── ...
+└── pages/                  ← فایل‌های HTML صفحات ثابت
+    ├── about.html
+    └── contact.html

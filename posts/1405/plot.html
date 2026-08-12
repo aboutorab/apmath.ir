@@ -1,0 +1,1722 @@
+<h1 class="entry-title">راهنمای جامع رسم نمودار توابع ریاضی</h1>
+
+<p>سلام به همهٔ علاقه‌مندان ریاضی و برنامه‌نویسی! امروز می‌خواهیم با هم دنیای جذاب رسم نمودار توابع ریاضی را کشف کنیم. از توابع سادهٔ دو بعدی مثل y = sin(x) بگیرید تا سطوح پیچیدهٔ سه‌بعدی مثل z = cos(x² + y²). قرار است هم ابزارهای آماده و رایگان را معرفی کنم، هم برویم سراغ کدنویسی با WebGL. پس کمربندها را ببندید!</p>
+<hr class="bs-post-more" />
+
+<h2>1. رسم نمودارهای دوبعدی</h2>
+
+<h3>1.1. سایت Desmos (غول قدرتمند و رایگان)</h3>
+<p><strong>آدرس:</strong> <a href="https://www.desmos.com/calculator" target="_blank">desmos.com/calculator</a></p>
+<p>دسموس محبوب‌ترین ماشین‌حساب گرافیکی آنلاین است. کار باهاش بی‌نهایت ساده است:</p>
+<ul>
+  <li>عبارت تابع را در کادر سمت چپ تایپ کنید، مثلاً: <code>y = sin(x)</code></li>
+  <li>برای توابع چندجمله‌ای: <code>y = x^3 - 4x^2 + 5</code></li>
+  <li>می‌توانید با کلیک روی دکمهٔ "+" چندین تابع را همزمان رسم کنید.</li>
+  <li>برای رسم توابع پارامتری، از حالت Parametric استفاده کنید.</li>
+</ul>
+<p><strong>مثال:</strong> تابع <code>y = x^3 - 3x</code> را در Desmos رسم کنید و ببینید چطور نقاط بحرانی (ماکزیمم و مینیمم) را نشان می‌دهد. دسموس به‌طور خودکار نقاط تقاطع، ماکزیمم، مینیمم و نقاط عطف را تشخیص می‌دهد و با کلیک روی آن‌ها مختصات دقیق را نشان می‌دهد.</p>
+
+<h3>1.2. سایت GeoGebra (قهرمان چندمنظوره)</h3>
+<p><strong>آدرس:</strong> <a href="https://www.geogebra.org/graphing" target="_blank">geogebra.org/graphing</a></p>
+<p>جئوجبرا فقط یک رسم‌کنندهٔ نمودار نیست، یک آزمایشگاه کامل ریاضی است:</p>
+<ul>
+  <li>در نوار ورودی سمت چپ بنویسید: <code>f(x) = e^x</code></li>
+  <li>می‌توانید نقطه بگذارید، خط مماس رسم کنید، و حتی انتگرال‌ها را به صورت بصری نمایش دهید.</li>
+  <li>قابلیت اسلایدر دارد. مثلاً بنویسید: <code>y = a*sin(b*x)</code>. خودش دو اسلایدر برای a و b می‌سازد تا با حرکت دادنشان تأثیرشان را ببینید.</li>
+</ul>
+<p><strong>مثال عملی:</strong> تابع <code>f(x) = x²</code> را رسم کنید. سپس با ابزار "Tangents" روی یک نقطه از نمودار کلیک کنید. جئوجبرا معادلهٔ خط مماس را هم نمایش می‌دهد!</p>
+
+<h3>1.3. WolframAlpha (دستیار هوشمند)</h3>
+<p><strong>آدرس:</strong> <a href="https://www.wolframalpha.com/" target="_blank">wolframalpha.com</a></p>
+<p>ولفرام آلفا مثل یک موتور جستجوی ریاضی کار می‌کند. کافی است تابع را به زبان طبیعی یا ریاضی تایپ کنید:</p>
+<ul>
+  <li>بنویسید: <code>plot sin(x), cos(x) from x=-2pi to 2pi</code></li>
+  <li>یا: <code>plot x^3 - 4x^2 + 5x - 2</code></li>
+  <li>می‌توانید چند تابع را با کاما جدا کنید و همزمان ببینید.</li>
+</ul>
+<p>ولفرام آلفا علاوه بر نمودار، اطلاعات تحلیلی مثل ریشه‌ها، دامنه، برد، و نقاط بحرانی را هم نشان می‌دهد. عالی برای بررسی تکالیف!</p>
+
+<h3>1.4. نرم‌افزارهای دسکتاپ</h3>
+<ul>
+  <li><strong>Gnuplot</strong> (رایگان و متن‌باز): قدرتمند و مبتنی بر خط فرمان. عالی برای رسم داده‌های علمی. دستور ساده: <code>plot sin(x)</code></li>
+  <li><strong>MATLAB / Octave</strong>: ابزار حرفه‌ای برای محاسبات عددی. رسم نمودار در متلب با <code>fplot(@sin)</code> انجام می‌شود. Octave نسخهٔ رایگان و سازگار با متلب است.</li>
+  <li><strong>Maple</strong> قدرتمند و مبتنی بر خط فرمان. یک نرم‌افزار همه کاره برای محاسبات عددی و انتزاعی. عالی برای رسم داده‌های علمی. هرچند این نرم‌افزار رایگان نیست، اما ارزش استفاده را دارد. علاوه بر قابلیت‌های بی‌شمار، یک راهنمای قوی (Help) دارد که با مثالهای فراوان روش استفاده از نرم‌افزار را آموزش داده است. دستور ساده برای رسم نمودار: <code>plot(sin(x))</code></li>
+  <li><strong>Mathematica</strong> این نرم‌افزار شبیه به نرم‌افزار میپل است یعنی قدرتمند و مبتنی بر خط فرمان. یک نرم‌افزار همه کاره برای محاسبات عددی و انتزاعی. عالی برای رسم داده‌های علمی. هرچند این نرم‌افزار رایگان نیست، اما ارزش استفاده را دارد. علاوه بر قابلیت‌های بی‌شمار، یک راهنمای قوی (Help) دارد که با مثالهای فراوان روش استفاده از نرم‌افزار را آموزش داده است. دستور ساده برای رسم نمودار: <code>Plot[Sin[x], {x, 0, 10}]</code></li>
+</ul>
+
+<h2>2. رسم نمودارهای دوبعدی در وب با Canvas (فایل HTML کامل)</h2>
+
+<p>حالا می‌رسیم به بخش کدنویسی. می‌خواهیم یک فایل HTML کامل بسازیم که بتواند توابع ریاضی دوبعدی را رسم کند. از Canvas استفاده می‌کنیم که در تمام مرورگرهای مدرن پشتیبانی می‌شود و نیازی به کتابخانهٔ خارجی ندارد.</p>
+
+<p>فایل زیر را با پسوند <code>html.</code> ذخیره کنید و در مرورگر باز کنید. می‌توانید تابع را تغییر دهید، زوم کنید، و با ماوس جابجا شوید. همه چیز در همین یک فایل است.</p>
+
+         <!-- ================================================== -->
+        <!-- ====== کد اول: HTML ====== -->
+        <!-- ================================================== -->
+        
+        <div class="code-wrapper-custom">
+
+            <div class="code-header-custom">
+                <span class="code-title-custom">📄 کد HTML برای رسم تابع دو بعدی</span>
+                <div class="header-buttons-custom">
+                    <button class="btn-custom btn-copy-custom" id="copyBtn1">📋 کپی</button>
+                    <button class="btn-custom btn-toggle-custom" id="toggleBtn1">🔽 نمایش کد</button>
+                </div>
+            </div>
+
+            <div class="code-body-custom" id="codeBody1">
+                <pre class="code-content-custom" id="codeContent1">
+<code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fa"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;رسم نمودار دوبعدی توابع ریاضی با Canvas&lt;/title&gt;
+  &lt;style&gt;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+
+    #info {
+      text-align: center;
+      margin-bottom: 25px;
+      direction: rtl;
+    }
+
+    #info h2 {
+      margin: 0 0 8px 0;
+      font-size: 26px;
+      color: #ff6b6b;
+      text-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    #info p {
+      margin: 4px 0;
+      color: #b0b0b0;
+      font-size: 14px;
+    }
+
+    .canvas-wrapper {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(255, 107, 107, 0.4);
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    canvas {
+      display: block;
+      border-radius: 10px;
+      cursor: grab;
+    }
+
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+      align-items: center;
+      justify-content: center;
+      direction: rtl;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 16px;
+      border-radius: 25px;
+    }
+
+    .control-group label {
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .control-group input[type="range"] {
+      width: 100px;
+      accent-color: #ff6b6b;
+    }
+
+    .control-group input[type="text"] {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      width: 250px;
+      font-size: 15px;
+      font-family: 'Courier New', monospace;
+      text-align: left;
+      direction: ltr;
+    }
+
+    .control-group input[type="text"]:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 12px rgba(255, 107, 107, 0.4);
+    }
+
+    button {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #ff8787;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: center;
+      direction: rtl;
+    }
+
+    .example-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Courier New', monospace;
+    }
+
+    .example-btn:hover {
+      background: rgba(255, 107, 107, 0.3);
+      border-color: #ff6b6b;
+      color: white;
+    }
+
+    .value-display {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #ffd93d;
+      min-height: 24px;
+      direction: rtl;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="info"&gt;
+    &lt;h2&gt;📐 رسم نمودار دوبعدی توابع ریاضی&lt;/h2&gt;
+    &lt;p&gt;🖱️ با ماوس بکشید تا جابجا شوید | اسکرول کنید تا زوم کنید&lt;/p&gt;
+    &lt;p&gt;📍 موس را روی نمودار نگه دارید تا مختصات دقیق را ببینید&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="canvas-wrapper"&gt;
+    &lt;canvas id="graphCanvas" width="800" height="550"&gt;&lt;/canvas&gt;
+  &lt;/div&gt;
+
+  &lt;div class="value-display" id="valueDisplay"&gt;مختصات: —&lt;/div&gt;
+
+  &lt;div class="controls"&gt;
+    &lt;div class="control-group"&gt;
+      &lt;label&gt;f(x) =&lt;/label&gt;
+      &lt;input type="text" id="functionInput" value="Math.sin(x) * Math.cos(x/2)" dir="ltr"&gt;
+      &lt;button id="drawButton"&gt;🔄 رسم&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="control-group"&gt;
+      &lt;label&gt;🔍 زوم:&lt;/label&gt;
+      &lt;input type="range" id="zoomSlider" min="10" max="300" value="60" step="1"&gt;
+      &lt;button id="resetButton"&gt;↺ بازنشانی&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="examples"&gt;
+    &lt;span style="color:#aaa; font-size:13px;"&gt;مثال‌های آماده:&lt;/span&gt;
+    &lt;button class="example-btn" data-func="Math.sin(x)"&gt;sin(x)&lt;/button&gt;
+    &lt;button class="example-btn" data-func="Math.cos(x)"&gt;cos(x)&lt;/button&gt;
+    &lt;button class="example-btn" data-func="Math.tan(x)"&gt;tan(x)&lt;/button&gt;
+    &lt;button class="example-btn" data-func="x*x"&gt;x²&lt;/button&gt;
+    &lt;button class="example-btn" data-func="x*x*x - 3*x"&gt;x³ - 3x&lt;/button&gt;
+    &lt;button class="example-btn" data-func="Math.exp(-x*x/4)*Math.cos(3*x)"&gt;e^(-x²/4)·cos(3x)&lt;/button&gt;
+    &lt;button class="example-btn" data-func="Math.sin(x) + 0.5*Math.sin(3*x)"&gt;sin(x)+½sin(3x)&lt;/button&gt;
+    &lt;button class="example-btn" data-func="Math.sin(x)/x"&gt;sin(x)/x&lt;/button&gt;
+    &lt;button class="example-btn" data-func="1/(1+Math.exp(-x))"&gt;1/(1+e⁻ˣ)&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    (function() {
+      // ==========================================
+      // ۱. گرفتن المان‌های DOM
+      // ==========================================
+      const canvas = document.getElementById('graphCanvas');
+      const ctx = canvas.getContext('2d');
+      const functionInput = document.getElementById('functionInput');
+      const drawButton = document.getElementById('drawButton');
+      const zoomSlider = document.getElementById('zoomSlider');
+      const resetButton = document.getElementById('resetButton');
+      const valueDisplay = document.getElementById('valueDisplay');
+      const exampleButtons = document.querySelectorAll('.example-btn');
+
+      // ==========================================
+      // ۲. متغیرهای حالت
+      // ==========================================
+      // محدودهٔ نمایش در دستگاه مختصات ریاضی
+      let xMin = -8;
+      let xMax = 8;
+      let yMin = -5;
+      let yMax = 5;
+
+      // وضعیت درگ کردن با ماوس
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let dragStartXMin = 0;
+      let dragStartXMax = 0;
+      let dragStartYMin = 0;
+      let dragStartYMax = 0;
+
+      // موقعیت ماوس برای نمایش مختصات
+      let mouseX = null;
+      let mouseY = null;
+
+      // ==========================================
+      // ۳. تبدیل مختصات
+      // ==========================================
+      function toCanvasX(mathX) {
+        return ((mathX - xMin) / (xMax - xMin)) * canvas.width;
+      }
+
+      function toCanvasY(mathY) {
+        return canvas.height - ((mathY - yMin) / (yMax - yMin)) * canvas.height;
+      }
+
+      function toMathX(canvasX) {
+        return xMin + (canvasX / canvas.width) * (xMax - xMin);
+      }
+
+      function toMathY(canvasY) {
+        return yMin + ((canvas.height - canvasY) / canvas.height) * (yMax - yMin);
+      }
+
+      // ==========================================
+      // ۴. رسم شبکه و محورها
+      // ==========================================
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // پس‌زمینه
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // محاسبهٔ فاصلهٔ مناسب برای خطوط شبکه
+        const xRange = xMax - xMin;
+        const yRange = yMax - yMin;
+
+        function niceStep(range) {
+          const roughStep = range / 10;
+          const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+          const residual = roughStep / magnitude;
+          let niceResidual;
+          if (residual <= 1.5) niceResidual = 1;
+          else if (residual <= 3.5) niceResidual = 2;
+          else if (residual <= 7.5) niceResidual = 5;
+          else niceResidual = 10;
+          return niceResidual * magnitude;
+        }
+
+        const xStep = niceStep(xRange);
+        const yStep = niceStep(yRange);
+
+        // خطوط شبکه
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.lineWidth = 1;
+
+        // خطوط عمودی
+        let xStart = Math.ceil(xMin / xStep) * xStep;
+        for (let x = xStart; x <= xMax; x += xStep) {
+          const cx = toCanvasX(x);
+          ctx.beginPath();
+          ctx.moveTo(cx, 0);
+          ctx.lineTo(cx, canvas.height);
+          ctx.stroke();
+        }
+
+        // خطوط افقی
+        let yStart = Math.ceil(yMin / yStep) * yStep;
+        for (let y = yStart; y <= yMax; y += yStep) {
+          const cy = toCanvasY(y);
+          ctx.beginPath();
+          ctx.moveTo(0, cy);
+          ctx.lineTo(canvas.width, cy);
+          ctx.stroke();
+        }
+
+        // محورهای اصلی
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1.5;
+
+        // محور X
+        if (yMin <= 0 && yMax >= 0) {
+          const cy = toCanvasY(0);
+          ctx.beginPath();
+          ctx.moveTo(0, cy);
+          ctx.lineTo(canvas.width, cy);
+          ctx.stroke();
+        }
+
+        // محور Y
+        if (xMin <= 0 && xMax >= 0) {
+          const cx = toCanvasX(0);
+          ctx.beginPath();
+          ctx.moveTo(cx, 0);
+          ctx.lineTo(cx, canvas.height);
+          ctx.stroke();
+        }
+
+        // اعداد روی محورها
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = '12px "Segoe UI", Tahoma, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+
+        for (let x = xStart; x <= xMax; x += xStep) {
+          if (Math.abs(x) < xStep / 100) continue;
+          const cx = toCanvasX(x);
+          const cy = toCanvasY(0);
+          const displayX = Math.abs(x) < 1e-10 ? 0 : parseFloat(x.toFixed(4));
+          ctx.fillText(displayX, cx, cy + 6);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        for (let y = yStart; y <= yMax; y += yStep) {
+          if (Math.abs(y) < yStep / 100) continue;
+          const cx = toCanvasX(0);
+          const cy = toCanvasY(y);
+          const displayY = Math.abs(y) < 1e-10 ? 0 : parseFloat(y.toFixed(4));
+          ctx.fillText(displayY, cx - 8, cy);
+        }
+
+        // صفر
+        if (xMin <= 0 && xMax >= 0 && yMin <= 0 && yMax >= 0) {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'top';
+          ctx.fillText('0', toCanvasX(0) - 6, toCanvasY(0) + 4);
+        }
+      }
+
+      // ==========================================
+      // ۵. ارزیابی تابع
+      // ==========================================
+      function evaluateFunction(funcStr, x) {
+        try {
+          const f = new Function('x', `return ${funcStr};`);
+          const result = f(x);
+          if (typeof result !== 'number' || !isFinite(result)) {
+            return NaN;
+          }
+          return result;
+        } catch (e) {
+          return NaN;
+        }
+      }
+
+      // ==========================================
+      // ۶. رسم نمودار تابع
+      // ==========================================
+      function drawFunction() {
+        const funcStr = functionInput.value.trim();
+        if (!funcStr) return;
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        // ایجاد سایهٔ نئونی
+        ctx.shadowColor = 'rgba(255, 107, 107, 0.6)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        let firstPoint = true;
+        let prevY = null;
+
+        // گام نمونه‌برداری: یک نقطه برای هر پیکسل در عرض
+        const step = (xMax - xMin) / canvas.width;
+
+        for (let px = 0; px <= canvas.width; px++) {
+          const x = toMathX(px);
+          const y = evaluateFunction(funcStr, x);
+
+          if (isNaN(y)) {
+            firstPoint = true;
+            prevY = null;
+            continue;
+          }
+
+          const cy = toCanvasY(y);
+
+          // قطع کردن در لبه‌ها برای جلوگیری از خطوط عجیب
+          if (prevY !== null && Math.abs(y - prevY) > (yMax - yMin) * 0.8) {
+            firstPoint = true;
+          }
+
+          if (firstPoint) {
+            ctx.moveTo(px, Math.max(-1000, Math.min(2000, cy)));
+            firstPoint = false;
+          } else {
+            ctx.lineTo(px, Math.max(-1000, Math.min(2000, cy)));
+          }
+
+          prevY = y;
+        }
+
+        ctx.stroke();
+
+        // حذف سایه برای بقیهٔ رسم‌ها
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
+
+      // ==========================================
+      // ۷. نمایش مختصات زیر ماوس
+      // ==========================================
+      function drawCrosshair() {
+        if (mouseX === null || mouseY === null) return;
+        if (mouseX < 0 || mouseX > canvas.width || mouseY < 0 || mouseY > canvas.height) return;
+
+        const mathX = toMathX(mouseX);
+        const mathY = toMathY(mouseY);
+
+        // خطوط نقطه‌چین
+        ctx.save();
+        ctx.setLineDash([4, 6]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+        ctx.moveTo(mouseX, 0);
+        ctx.lineTo(mouseX, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, mouseY);
+        ctx.lineTo(canvas.width, mouseY);
+        ctx.stroke();
+        ctx.restore();
+
+        // دایره در نقطهٔ تقاطع
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 107, 107, 0.7)';
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // به‌روزرسانی نمایش مختصات
+        const funcStr = functionInput.value.trim();
+        let funcValue = '—';
+        if (funcStr) {
+          const val = evaluateFunction(funcStr, mathX);
+          if (!isNaN(val)) {
+            funcValue = val.toFixed(6);
+          }
+        }
+        valueDisplay.innerHTML = 
+          `📍 x = ${mathX.toFixed(4)} | y = ${mathY.toFixed(4)} | f(x) = ${funcValue}`;
+      }
+
+      // ==========================================
+      // ۸. تابع اصلی رسم
+      // ==========================================
+      function render() {
+        drawGrid();
+        drawFunction();
+        drawCrosshair();
+      }
+
+      // ==========================================
+      // ۹. رویدادهای ماوس
+      // ==========================================
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        dragStartX = e.offsetX;
+        dragStartY = e.offsetY;
+        dragStartXMin = xMin;
+        dragStartXMax = xMax;
+        dragStartYMin = yMin;
+        dragStartYMax = yMax;
+        canvas.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        canvas.style.cursor = 'grab';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const canvasX = e.clientX - rect.left;
+        const canvasY = e.clientY - rect.top;
+
+        if (isDragging) {
+          const dx = canvasX - dragStartX;
+          const dy = canvasY - dragStartY;
+
+          const xRange = dragStartXMax - dragStartXMin;
+          const yRange = dragStartYMax - dragStartYMin;
+
+          const dxMath = -(dx / canvas.width) * xRange;
+          const dyMath = (dy / canvas.height) * yRange;
+
+          xMin = dragStartXMin + dxMath;
+          xMax = dragStartXMax + dxMath;
+          yMin = dragStartYMin + dyMath;
+          yMax = dragStartYMax + dyMath;
+
+          render();
+        } else {
+          mouseX = canvasX;
+          mouseY = canvasY;
+          render();
+        }
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseCanvasX = e.clientX - rect.left;
+        const mouseCanvasY = e.clientY - rect.top;
+
+        const mathX = toMathX(mouseCanvasX);
+        const mathY = toMathY(mouseCanvasY);
+
+        const zoomFactor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
+
+        const newXMin = mathX - (mathX - xMin) * zoomFactor;
+        const newXMax = mathX + (xMax - mathX) * zoomFactor;
+        const newYMin = mathY - (mathY - yMin) * zoomFactor;
+        const newYMax = mathY + (yMax - mathY) * zoomFactor;
+
+        // محدود کردن زوم
+        const newXRange = newXMax - newXMin;
+        const newYRange = newYMax - newYMin;
+        if (newXRange < 0.01 || newXRange > 1000 || newYRange < 0.01 || newYRange > 1000) {
+          return;
+        }
+
+        xMin = newXMin;
+        xMax = newXMax;
+        yMin = newYMin;
+        yMax = newYMax;
+
+        // به‌روزرسانی اسلایدر
+        const avgRange = (newXRange + newYRange) / 2;
+        zoomSlider.value = Math.round(200 / avgRange);
+
+        render();
+      });
+
+      // ==========================================
+      // ۱۰. رویدادهای کنترلی
+      // ==========================================
+      drawButton.addEventListener('click', () => {
+        render();
+      });
+
+      functionInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          render();
+        }
+      });
+
+      zoomSlider.addEventListener('input', () => {
+        const val = parseInt(zoomSlider.value);
+        const targetRange = 200 / val;
+
+        const centerX = (xMin + xMax) / 2;
+        const centerY = (yMin + yMax) / 2;
+
+        xMin = centerX - targetRange / 2;
+        xMax = centerX + targetRange / 2;
+        yMin = centerY - targetRange / 2;
+        yMax = centerY + targetRange / 2;
+
+        render();
+      });
+
+      resetButton.addEventListener('click', () => {
+        xMin = -8;
+        xMax = 8;
+        yMin = -5;
+        yMax = 5;
+        zoomSlider.value = 60;
+        render();
+      });
+
+      // دکمه‌های مثال
+      exampleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const func = btn.getAttribute('data-func');
+          functionInput.value = func;
+          xMin = -8;
+          xMax = 8;
+          yMin = -5;
+          yMax = 5;
+          zoomSlider.value = 60;
+          render();
+        });
+      });
+
+      // ==========================================
+      // ۱۱. رسم اولیه
+      // ==========================================
+      render();
+
+      console.log('✅ نمودار دوبعدی با Canvas آماده است!');
+      console.log('🖱️  با ماوس بکشید و اسکرول کنید.');
+      console.log('✏️  تابع خود را در کادر وارد کنید.');
+    })();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div></div>
+    <!-- پیام کپی شدن (با کلاس جدید) -->
+    <div class="copy-toast-custom" id="copyToast">✅ کد با موفقیت کپی شد!</div>
+
+<h3>توضیح کد Canvas</h3>
+<ul>
+  <li><strong>تابع eval:</strong> تابع واردشده توسط کاربر با <code>new Function('x', ...)</code> ارزیابی می‌شود که از <code>eval</code> مستقیم امن‌تر است. می‌توانید از تمام توابع <code>Math</code> مثل <code>Math.sin</code>، <code>Math.exp</code>، <code>Math.sqrt</code> و غیره استفاده کنید.</li>
+  <li><strong>جابجایی و زوم:</strong> با درگ ماوس جابجا می‌شوید و با اسکرول زوم می‌کنید. زوم نسبت به موقعیت نشانگر ماوس انجام می‌شود.</li>
+  <li><strong>شبکهٔ تطبیقی:</strong> فاصلهٔ خطوط شبکه به‌طور هوشمند بر اساس محدودهٔ نمایش انتخاب می‌شود (اعداد رُند مثل ۱، ۲، ۵ یا مضارب ۱۰).</li>
+  <li><strong>قطع ناپیوستگی‌ها:</strong> اگر تابع پرش ناگهانی داشته باشد (مثل tan(x))، خط در آن نقطه قطع می‌شود.</li>
+</ul>
+
+<p>شما می&zwnj;تونید <a href="/posts/1405/canvas.html" target="_blank">اینجا</a> فایل فوق را مشاهده بفرمایید.</p>
+
+<h2>3. رسم نمودارهای سه‌بعدی</h2>
+
+<h3>3.1. Desmos 3D</h3>
+<p><strong>آدرس:</strong> <a href="https://www.desmos.com/3d" target="_blank">desmos.com/3d</a></p>
+<p>دسموس اخیراً قابلیت سه‌بعدی را هم اضافه کرده است. می‌توانید سطوح را با معادلات به فرم z = f(x,y) رسم کنید:</p>
+<ul>
+  <li>بنویسید: <code>z = sin(x) * cos(y)</code></li>
+  <li>با ماوس می‌توانید نمودار را بچرخانید و از زوایای مختلف ببینید.</li>
+  <li>رنگ‌بندی بر اساس ارتفاع (ارتفاع z) انجام می‌شود که به درک بهتر سطح کمک می‌کند.</li>
+</ul>
+
+<h3>3.2. GeoGebra 3D Calculator</h3>
+<p><strong>آدرس:</strong> <a href="https://www.geogebra.org/3d" target="_blank">geogebra.org/3d</a></p>
+<p>محیط سه‌بعدی جئوجبرا بی‌نظیر است:</p>
+<ul>
+  <li>در نوار ورودی بنویسید: <code>f(x,y) = x^2 - y^2</code> (سطح زین‌اسبی یا سهمی‌گون هذلولی)</li>
+  <li>می‌توانید سطوح را با صفحه‌ها ببرید (Cross Section).</li>
+  <li>امکان تعریف توابع پارامتری برای رسم خم‌های فضایی هم وجود دارد: <code>Curve(cos(t), sin(t), t, t, 0, 10)</code></li>
+</ul>
+
+<h3>3.3. Math3D.org</h3>
+<p><strong>آدرس:</strong> <a href="https://www.math3d.org/" target="_blank">math3d.org</a></p>
+<p>این سایت کمتر شناخته شده اما فوق‌العاده است. کاملاً رایگان و بدون ثبت‌نام:</p>
+<ul>
+  <li>می‌توانید توابع ضمنی (Implicit) مثل <code>x^2 + y^2 + z^2 = 1</code> (کره) را رسم کنید.</li>
+  <li>رابط کاربری تمیز و امکان چرخش بسیار روان با WebGL.</li>
+</ul>
+
+<h3>3.4. نرم‌افزارهای حرفه‌ای</h3>
+<ul>
+  <li><strong>Surfer</strong> (رایگان): نرم‌افزاری جذاب برای رسم سطوح جبری. معادله را وارد کنید و سطح شگفت‌انگیزش را ببینید.</li>
+  <li><strong>K3DSurf</strong> (رایگان): برای رسم سطوح پارامتری و ضمنی در فضا.</li>
+  <li><strong>Maple, Mathematica and Matlab</strong> این سه نرم‌افزار که در بالا معرفی شد، به طور دقیقی قابلیت رسم نمودارهای سه‌بعدی را دارند.</li>
+</ul>
+
+<h2>4. رسم نمودار با گوگل</h2>
+<p>شاید ندانید، اما خود موتور جستجوی گوگل هم می‌تواند نمودار رسم کند! کافی است تابع را مستقیماً در نوار جستجو تایپ کنید. لازم به ذکر است بعضی مواقع قابلیت رسم نمودار در گوگل کار می‌کند، بعضی مواقع کار نمی‌کند. در هر حالت علاوه بر نمودار، گوگل تعدادی سایت مرتبط با رسم نمودار ارائه می‌دهد که می‌تواند برای رسم نمودار مفید باشد.</p>
+
+<h3>4.1. رسم توابع دوبعدی</h3>
+<ul>
+  <li>در گوگل جستجو کنید: <code>y = x^3 - 3x</code> یا <code>sin(x)</code></li>
+  <li>گوگل یک نمودار تعاملی در بالای نتایج نشان می‌دهد.</li>
+  <li>می‌توانید با ماوس روی نمودار زوم کنید و جابجا شوید.</li>
+  <li>برای دیدن جزئیات، روی نمودار کلیک کنید. وارد صفحهٔ ماشین‌حساب گرافیکی گوگل می‌شوید.</li>
+</ul>
+
+<h3>4.2. رسم توابع سه‌بعدی</h3>
+<ul>
+  <li>در گوگل جستجو کنید: <code>z = x^2 + y^2</code></li>
+  <li>گوگل یک سطح سه‌بعدی زیبا نمایش می‌دهد که می‌توانید آن را بچرخانید.</li>
+  <li>مثال جذاب: <code>z = sin(x) + cos(y)</code></li>
+  <li>مثال پیچیده‌تر: <code>z = e^(-(x^2 + y^2))</code> (سطح گاوسی)</li>
+</ul>
+
+<p>این قابلیت گوگل واقعاً برای بررسی سریع یک تابع عالی است. نیازی به هیچ سایت یا نرم‌افزار اضافه‌ای ندارید.</p>
+
+<h2>5. رسم نمودار سه‌بعدی با WebGL — نسخهٔ تعاملی با قابلیت تغییر تابع</h2>
+
+<p>حالا می‌رسیم به بخش هیجان‌انگیز ماجرا: خودتان با WebGL نمودار سه‌بعدی بکشید، آن هم با قابلیت <strong>تغییر تابع f(x, y) به صورت زنده!</strong> از کتابخانهٔ <strong>Three.js</strong> استفاده می‌کنیم. فایل زیر یک سند HTML کامل و آمادهٔ اجراست که می‌توانید تابع مورد نظرتان را در کادر متنی وارد کنید و بلافاصله سطح جدید را ببینید.</p>
+
+        <!-- ================================================== -->
+        <!-- ====== کد دوم: CSS ====== -->
+        <!-- ================================================== -->
+        
+        <div class="code-wrapper-custom">
+
+            <div class="code-header-custom">
+                <span class="code-title-custom">🎨 کد HTML برای رسم تابع سه بعدی</span>
+                <div class="header-buttons-custom">
+                    <button class="btn-custom btn-copy-custom" id="copyBtn2">📋 کپی</button>
+                    <button class="btn-custom btn-toggle-custom" id="toggleBtn2">🔽 نمایش کد</button>
+                </div>
+            </div>
+
+            <div class="code-body-custom" id="codeBody2">
+                <pre class="code-content-custom" id="codeContent2">
+<code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fa"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;رسم نمودار سه‌بعدی تعاملی با WebGL&lt;/title&gt;
+  &lt;style&gt;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    #info {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #info h2 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      color: #e94560;
+      text-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+    }
+
+    #info p {
+      margin: 4px 0;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .controls-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px 25px;
+      border-radius: 40px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .controls-panel label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #e94560;
+    }
+
+    .controls-panel input[type="text"] {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(233, 69, 96, 0.4);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 25px;
+      width: 350px;
+      font-size: 16px;
+      font-family: 'Courier New', monospace;
+      direction: ltr;
+      text-align: left;
+      transition: all 0.3s;
+    }
+
+    .controls-panel input[type="text"]:focus {
+      outline: none;
+      border-color: #e94560;
+      box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .controls-panel button {
+      background: #e94560;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+    }
+
+    .controls-panel button:hover {
+      background: #ff6b81;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5);
+    }
+
+    .controls-panel button:active {
+      transform: translateY(0);
+    }
+
+    #container {
+      width: 820px;
+      height: 580px;
+      border: 2px solid rgba(233, 69, 96, 0.5);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+      cursor: grab;
+      background: #0a0a1a;
+    }
+
+    #container:active {
+      cursor: grabbing;
+    }
+
+    .examples-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+
+    .example-chip {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'Courier New', monospace;
+      direction: ltr;
+    }
+
+    .example-chip:hover {
+      background: rgba(233, 69, 96, 0.25);
+      border-color: #e94560;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+    }
+
+    .status-message {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #ffd93d;
+      min-height: 20px;
+      text-align: center;
+    }
+
+    .status-message.error {
+      color: #ff4757;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="info"&gt;
+    &lt;h2&gt;🌐 رسم‌کنندهٔ سه‌بعدی توابع ریاضی&lt;/h2&gt;
+    &lt;p&gt;🖱️ چرخش: کلیک چپ + کشیدن | 🔍 زوم: اسکرول | ✋ جابجایی: کلیک راست + کشیدن&lt;/p&gt;
+    &lt;p&gt;✏️ تابع f(x, y) را وارد کنید و کلید Enter یا دکمهٔ رسم را بزنید&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="controls-panel"&gt;
+    &lt;label&gt;f(x, y) =&lt;/label&gt;
+    &lt;input type="text" id="functionInput" value="Math.sin(x*x + y*y)" placeholder="مثلاً: Math.cos(x)*Math.sin(y)" dir="ltr"&gt;
+    &lt;button id="drawButton"&gt;✨ رسم کن&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div id="container"&gt;&lt;/div&gt;
+
+  &lt;div class="status-message" id="statusMessage"&gt;✅ سطح فعلی: z = sin(x² + y²)&lt;/div&gt;
+
+  &lt;div class="examples-row"&gt;
+    &lt;span style="color:#888; font-size:12px; margin-left:5px;"&gt;📋 مثال‌های آماده:&lt;/span&gt;
+    &lt;button class="example-chip" data-func="Math.sin(x*x + y*y)"&gt;sin(x² + y²)&lt;/button&gt;
+    &lt;button class="example-chip" data-func="Math.cos(x)*Math.sin(y)"&gt;cos(x)·sin(y)&lt;/button&gt;
+    &lt;button class="example-chip" data-func="(x*x - y*y)/4"&gt;(x² - y²)/4&lt;/button&gt;
+    &lt;button class="example-chip" data-func="(x*x + y*y)/4"&gt;(x² + y²)/4&lt;/button&gt;
+    &lt;button class="example-chip" data-func="Math.exp(-(x*x + y*y)/4)"&gt;exp(-(x²+y²)/4)&lt;/button&gt;
+    &lt;button class="example-chip" data-func="Math.sin(x) + Math.cos(y)"&gt;sin(x)+cos(y)&lt;/button&gt;
+    &lt;button class="example-chip" data-func="Math.sin(Math.sqrt(x*x + y*y))"&gt;sin(√(x²+y²))&lt;/button&gt;
+    &lt;button class="example-chip" data-func="Math.cos(Math.abs(x) + Math.abs(y))"&gt;cos(|x|+|y|)&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;script type="importmap"&gt;
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+      }
+    }
+  &lt;/script&gt;
+
+  &lt;script type="module"&gt;
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ==========================================
+    // ۱. المان‌های DOM
+    // ==========================================
+    const container = document.getElementById('container');
+    const functionInput = document.getElementById('functionInput');
+    const drawButton = document.getElementById('drawButton');
+    const statusMessage = document.getElementById('statusMessage');
+    const exampleChips = document.querySelectorAll('.example-chip');
+
+    // ==========================================
+    // ۲. صحنه، دوربین، رندرر
+    // ==========================================
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(6, 5, 6);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // ==========================================
+    // ۳. کنترل‌های چرخش
+    // ==========================================
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.rotateSpeed = 0.8;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.7;
+    controls.target.set(0, 0, 0);
+    controls.update();
+
+    // ==========================================
+    // ۴. نورپردازی
+    // ==========================================
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(1, 1, 1);
+    scene.add(directionalLight1);
+
+    const directionalLight2 = new THREE.DirectionalLight(0x4488ff, 0.4);
+    directionalLight2.position.set(-1, -0.5, -0.5);
+    scene.add(directionalLight2);
+
+    // ==========================================
+    // ۵. اضافه کردن محورها و صفحهٔ کمکی
+    // ==========================================
+    function createAxes(size) {
+      // حذف محورهای قبلی (اگر وجود دارند)
+      const oldAxes = scene.getObjectByName('axesGroup');
+      if (oldAxes) scene.remove(oldAxes);
+
+      const axesGroup = new THREE.Group();
+      axesGroup.name = 'axesGroup';
+      const axisLength = size + 0.8;
+      const axisThickness = 0.03;
+
+      const xAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
+      const xAxisMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+      const xAxis = new THREE.Mesh(xAxisGeo, xAxisMat);
+      xAxis.rotation.z = -Math.PI / 2;
+      axesGroup.add(xAxis);
+
+      const yAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
+      const yAxisMat = new THREE.MeshBasicMaterial({ color: 0x44ff44 });
+      const yAxis = new THREE.Mesh(yAxisGeo, yAxisMat);
+      axesGroup.add(yAxis);
+
+      const zAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
+      const zAxisMat = new THREE.MeshBasicMaterial({ color: 0x4444ff });
+      const zAxis = new THREE.Mesh(zAxisGeo, zAxisMat);
+      zAxis.rotation.x = Math.PI / 2;
+      axesGroup.add(zAxis);
+
+      scene.add(axesGroup);
+    }
+
+    function createGrid(size) {
+      const oldGrid = scene.getObjectByName('gridHelper');
+      if (oldGrid) scene.remove(oldGrid);
+
+      const gridHelper = new THREE.GridHelper(size * 2, 20, 0x444466, 0x222244);
+      gridHelper.name = 'gridHelper';
+      gridHelper.position.y = -size - 0.3;
+      scene.add(gridHelper);
+    }
+
+    // ==========================================
+    // ۶. کامپایل تابع از رشتهٔ ورودی
+    // ==========================================
+    function compileFunction(funcStr) {
+      try {
+        // ساخت تابعی با دو آرگومان x و y
+        const f = new Function('x', 'y', `return ${funcStr};`);
+        // تست با یک مقدار ساده
+        const testResult = f(0, 0);
+        if (typeof testResult !== 'number' || !isFinite(testResult)) {
+          return { error: 'تابع باید یک عدد برگرداند. خروجی تابع شما برای (0,0) معتبر نیست.' };
+        }
+        return { func: f, error: null };
+      } catch (e) {
+        return { error: `خطا در تجزیهٔ تابع: ${e.message}` };
+      }
+    }
+
+    // ==========================================
+    // ۷. ساخت هندسهٔ سطح از تابع
+    // ==========================================
+    function createSurfaceGeometry(func, size, segments) {
+      const geometry = new THREE.BufferGeometry();
+      const vertices = [];
+      const colors = [];
+      const indices = [];
+
+      // ابتدا یک بار همهٔ zها را محاسبه می‌کنیم تا min و max را پیدا کنیم
+      const allZ = [];
+      for (let i = 0; i <= segments; i++) {
+        const x = -size + (i / segments) * 2 * size;
+        for (let j = 0; j <= segments; j++) {
+          const y = -size + (j / segments) * 2 * size;
+          let z;
+          try {
+            z = func(x, y);
+          } catch (e) {
+            z = NaN;
+          }
+          if (typeof z !== 'number' || !isFinite(z)) {
+            z = 0; // مقدار پیش‌فرض برای نقاط نامعتبر
+          }
+          allZ.push(z);
+        }
+      }
+
+      const validZ = allZ.filter(v => isFinite(v));
+      let zMin = Math.min(...validZ);
+      let zMax = Math.max(...validZ);
+      
+      // اگر همهٔ مقادیر یکسان بودند، بازه را کمی باز می‌کنیم
+      if (zMax - zMin < 0.001) {
+        zMin -= 0.5;
+        zMax += 0.5;
+      }
+
+      // تولید رئوس و رنگ‌ها
+      let idx = 0;
+      for (let i = 0; i <= segments; i++) {
+        const x = -size + (i / segments) * 2 * size;
+        for (let j = 0; j <= segments; j++) {
+          const y = -size + (j / segments) * 2 * size;
+          const z = allZ[idx];
+          idx++;
+
+          vertices.push(x, z, y); // توجه: محور Y در Three.js عمودی است
+
+          // رنگ‌آمیزی بر اساس ارتفاع نرمال‌شده
+          const normalizedZ = (z - zMin) / (zMax - zMin); // بین 0 و 1
+          const clampedZ = Math.max(0, Math.min(1, normalizedZ));
+
+          let r, g, b;
+          if (clampedZ < 0.5) {
+            const t = clampedZ * 2;
+            r = 0.1;
+            g = t;
+            b = 1 - t;
+          } else {
+            const t = (clampedZ - 0.5) * 2;
+            r = t;
+            g = 1 - t;
+            b = 0.1;
+          }
+          colors.push(r, g, b);
+        }
+      }
+
+      // تولید اندیس‌های مثلث‌ها
+      for (let i = 0; i < segments; i++) {
+        for (let j = 0; j < segments; j++) {
+          const a = i * (segments + 1) + j;
+          const b = a + 1;
+          const c = a + (segments + 1);
+          const d = c + 1;
+          indices.push(a, b, d);
+          indices.push(a, d, c);
+        }
+      }
+
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+
+      return geometry;
+    }
+
+    // ==========================================
+    // ۸. به‌روزرسانی سطح (حذف قدیمی و ساخت جدید)
+    // ==========================================
+    const SIZE = 4;
+    const SEGMENTS = 100;
+
+    function updateSurface(funcStr) {
+      // حذف سطح و وایرفریم قدیمی
+      const oldSurface = scene.getObjectByName('surfaceMesh');
+      if (oldSurface) scene.remove(oldSurface);
+      const oldWireframe = scene.getObjectByName('surfaceWireframe');
+      if (oldWireframe) scene.remove(oldWireframe);
+
+      // کامپایل تابع
+      const { func, error } = compileFunction(funcStr);
+      if (error) {
+        statusMessage.textContent = '❌ ' + error;
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+
+      // ساخت هندسه
+      let geometry;
+      try {
+        geometry = createSurfaceGeometry(func, SIZE, SEGMENTS);
+      } catch (e) {
+        statusMessage.textContent = '❌ خطا در ساخت سطح: ' + e.message;
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+
+      // ساخت مش
+      const material = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        side: THREE.DoubleSide,
+        roughness: 0.4,
+        metalness: 0.1,
+        flatShading: false,
+      });
+
+      const surface = new THREE.Mesh(geometry, material);
+      surface.name = 'surfaceMesh';
+      scene.add(surface);
+
+      // ساخت وایرفریم
+      const wireframeGeometry = new THREE.EdgesGeometry(geometry);
+      const wireframeMaterial = new THREE.LineBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.12,
+      });
+      const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+      wireframe.name = 'surfaceWireframe';
+      scene.add(wireframe);
+
+      // به‌روزرسانی محورها و شبکه
+      createAxes(SIZE);
+      createGrid(SIZE);
+
+      // پیام موفقیت
+      statusMessage.textContent = '✅ سطح فعلی: z = ' + funcStr;
+      statusMessage.className = 'status-message';
+      return true;
+    }
+
+    // ==========================================
+    // ۹. رویدادها
+    // ==========================================
+    function handleDraw() {
+      const funcStr = functionInput.value.trim();
+      if (!funcStr) {
+        statusMessage.textContent = '⚠️ لطفاً یک تابع وارد کنید.';
+        statusMessage.className = 'status-message error';
+        return;
+      }
+      updateSurface(funcStr);
+    }
+
+    drawButton.addEventListener('click', handleDraw);
+
+    functionInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleDraw();
+      }
+    });
+
+    // دکمه‌های مثال
+    exampleChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const func = chip.getAttribute('data-func');
+        functionInput.value = func;
+        updateSurface(func);
+      });
+    });
+
+    // ==========================================
+    // ۱۰. مدیریت تغییر اندازهٔ پنجره
+    // ==========================================
+    window.addEventListener('resize', () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+
+    // ==========================================
+    // ۱۱. حلقهٔ انیمیشن
+    // ==========================================
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // ==========================================
+    // ۱۲. راه‌اندازی اولیه
+    // ==========================================
+    const initialFunc = functionInput.value.trim();
+    updateSurface(initialFunc);
+    animate();
+
+    console.log('✅ رسم‌کنندهٔ سه‌بعدی تعاملی آماده است!');
+    console.log('✏️  تابع f(x, y) را تغییر دهید و Enter بزنید.');
+    console.log('🖱️  با ماوس بچرخانید و زوم کنید.');
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div></div>
+    <!-- پیام کپی شدن (با کلاس جدید) -->
+    <div class="copy-toast-custom" id="copyToast">✅ کد با موفقیت کپی شد!</div>
+
+<h3>توضیح کد WebGL تعاملی</h3>
+
+<ul>
+  <li><strong>ورودی تابع:</strong> یک کادر متنی در پایین صفحه قرار دارد که می‌توانید هر تابع دلخواهی را با سینتکس JavaScript وارد کنید. از تمام توابع <code>Math</code> مانند <code>Math.sin</code>، <code>Math.cos</code>، <code>Math.exp</code>، <code>Math.sqrt</code>، <code>Math.abs</code> و غیره می‌توانید استفاده کنید. متغیرها <code>x</code> و <code>y</code> هستند.</li>
+
+  <li><strong>به‌روزرسانی زنده:</strong> با فشردن کلید Enter یا کلیک روی دکمهٔ «رسم کن»، سطح قبلی حذف و سطح جدید جایگزین می‌شود. نیازی به رفرش صفحه نیست.</li>
+
+  <li><strong>رنگ‌آمیزی تطبیقی:</strong> کد ابتدا تمام مقادیر z را محاسبه می‌کند تا کمینه و بیشینه را پیدا کند، سپس رنگ‌ها را بر اساس آن بازه نرمال‌سازی می‌کند. بنابراین چه تابع شما بین ۰ و ۱ نوسان کند، چه بین ۱۰۰۰- و ۱۰۰۰+، رنگ‌بندی همیشه بهینه خواهد بود.</li>
+
+  <li><strong>مدیریت خطا:</strong> اگر تابع نامعتبر باشد یا خروجی آن عدد نباشد، پیام خطای مناسبی نمایش داده می‌شود و سطح قبلی (در صورت وجود) دست‌نخورده باقی می‌ماند.</li>
+
+  <li><strong>دکمه‌های مثال:</strong> ۸ تابع آماده در پایین صفحه قرار دارند که با کلیک روی هر کدام، هم متن ورودی به‌روزرسانی می‌شود و هم سطح جدید رسم می‌شود.</li>
+</ul>
+
+<h3>چند تابع پیشنهادی برای امتحان کردن</h3>
+
+<p>این عبارات را در کادر متنی وارد کنید و نتیجه را ببینید:</p>
+
+<ul>
+  <li><code>Math.sqrt(x*y)</code> — سطح رادیکالی</li>
+  <li><code>Math.sin(x) * Math.cos(y)</code> — سطح موج‌دار کلاسیک</li>
+  <li><code>(x*x - y*y) / 4</code> — سطح زین‌اسبی (هذلولی‌گون سهمی)</li>
+  <li><code>Math.exp(-(x*x + y*y) / 4)</code> — سطح گاوسی (زنگوله‌ای)</li>
+  <li><code>Math.sin(Math.sqrt(x*x + y*y))</code> — امواج دایره‌ای</li>
+  <li><code>Math.cos(Math.abs(x) + Math.abs(y))</code> — الگوی لوزی شکل</li>
+  <li><code>Math.sin(x) + Math.cos(y)</code> — موج ساده</li>
+  <li><code>(Math.sin(x) * Math.sin(y)) / (x*y + 0.1)</code> — الگوی تداخلی</li>
+  <li><code>Math.sin(x*x + y*y) / (x*x + y*y + 0.5)</code> — امواج میرا شونده</li>
+</ul>
+
+<p>فایل را ذخیره کنید، مرورگر را رفرش کنید و نتیجه را ببینید!</p>
+<p>شما می&zwnj;تونید <a href="/posts/1405/webgl.html" target="_blank">اینجا</a> فایل فوق را مشاهده بفرمایید.</p>
+
+<h2>6. رسم نمودار با کمک هوش مصنوعی</h2>
+
+<p>در سال‌های اخیر، هوش مصنوعی به کمک رسم و تحلیل توابع ریاضی آمده است. برای این کار، می‌توانید از مدل‌های هوش مصنوعی که تولید تصویر را پشتیبانی می‌کنند استفاده کنید. مثلا در هوش مصنوعی <a href="https://chat.qwen.ai/" target="_blank">qwen</a> عبارت زیر زیر را تایپ کنید تا برایتان نمودار تابع مورد نظر تولید شود.</p>
+<blockquote>
+<p style="text-align: center;"><span style="background-color: #ccffff;"><strong>نمودار تابع x^2+y^2=z را رسم کن</strong></span></p>
+</blockquote> 
+
+<h2>7. مقایسه و جمع‌بندی</h2>
+
+<p>بیایید نگاهی به ابزارهای مختلف بیندازیم و ببینیم هر کدام برای چه کاری بهترند:</p>
+
+<style>
+.table-container { max-width: 95%; margin: 0 auto; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; max-width: 100%; margin: 10px 0; table-layout: fixed;}
+th, td { border: 1px solid #ddd; padding: 12px; text-align: right; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; hyphens: auto;}
+th { background-color: #2c3e50; color: white; }
+tr:nth-child(even) { background-color: #f2f2f2; }
+</style>
+<div class="table-container">
+      <table>
+  <tr><th>ابزار</th><th>نوع</th><th>مزایا</th><th>معایب</th><th>مناسب برای</th></tr>
+  <tr>
+    <td>Desmos</td>
+    <td>تحت وب (۲بعدی و ۳بعدی)</td>
+    <td>بسیار ساده، تعاملی، رایگان</td>
+    <td>انعطاف‌پذیری محدود در سفارشی‌سازی</td>
+    <td>آموزش، کاوش سریع توابع</td>
+  </tr>
+  <tr>
+    <td>GeoGebra</td>
+    <td>تحت وب / نرم‌افزار</td>
+    <td>چندمنظوره، ابزارهای هندسه، اسلایدر</td>
+    <td>رابط کاربری شلوغ برای کار ساده</td>
+    <td>تدریس، ساخت محتوای تعاملی</td>
+  </tr>
+  <tr>
+    <td>WolframAlpha</td>
+    <td>تحت وب</td>
+    <td>تحلیل خودکار، اطلاعات تحلیلی</td>
+    <td>نسخهٔ رایگان محدودیت دارد</td>
+    <td>بررسی سریع و تحلیل توابع</td>
+  </tr>
+  <tr>
+    <td>Google Search</td>
+    <td>موتور جستجو</td>
+    <td>در دسترس‌ترین گزینه، بدون نیاز به سایت</td>
+    <td>قابلیت‌های پیشرفته ندارد</td>
+    <td>رسم فوری، چک کردن ظاهر تابع</td>
+  </tr>
+  <tr>
+    <td>WebGL / Three.js</td>
+    <td>کدنویسی شخصی</td>
+    <td>انعطاف بی‌نهایت، قابل جاسازی در سایت</td>
+    <td>نیاز به برنامه‌نویسی، پیچیدگی</td>
+    <td>پروژه‌های سفارشی، وب‌سایت‌های تعاملی</td>
+  </tr>
+  <tr>
+    <td>MATLAB / Octave</td>
+    <td>نرم‌افزار دسکتاپ</td>
+    <td>محاسبات عددی سنگین، رسم داده</td>
+    <td>نیاز به نصب، منحنی یادگیری بالا</td>
+    <td>تحقیقات، پایان‌نامه، مقاله</td>
+  </tr>
+</table>
+</div>
+      
+<p>امیدوارم این راهنما برایتان مفید بوده باشد. چه یک دانشجو باشید که می‌خواهد تکالیفش را چک کند، چه یک توسعه‌دهنده که می‌خواهد نمودارهای تعاملی در وب‌سایتش بگذارد، حالا ابزارهای لازم را می‌شناسید.</p>
+
+
+    <!-- ====== استایل‌های اختصاصی مثال (کلاس‌های جدید) ====== -->
+    <style>
+        /* ============================================
+           استایل‌های مربوط به نمایش کد (فقط کلاس‌های جدید)
+           ============================================ */
+
+        /* کادر اصلی کد */
+        .code-wrapper-custom {
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        /* هدر کادر */
+        .code-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #2d2d2d;
+            border-bottom: 1px solid #3d3d3d;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .code-title-custom {
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header-buttons-custom {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* دکمه‌ها */
+        .btn-custom {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-toggle-custom {
+            background: #007acc;
+            color: white;
+        }
+
+        .btn-toggle-custom:hover {
+            background: #005a9e;
+            transform: scale(1.05);
+        }
+
+        .btn-toggle-custom.active {
+            background: #e67e22;
+        }
+
+        .btn-toggle-custom.active:hover {
+            background: #d35400;
+        }
+
+        .btn-copy-custom {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-copy-custom:hover {
+            background: #1e8449;
+            transform: scale(1.05);
+        }
+
+        .btn-copy-custom.copied {
+            background: #f39c12;
+        }
+
+        /* بدنه کد (جمع‌شونده) */
+        .code-body-custom {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #1e1e1e;
+        }
+
+        .code-body-custom.open {
+            max-height: 2000px;
+        }
+
+        /* خود کد */
+        .code-content-custom {
+            padding: 20px;
+            margin: 0;
+            color: #d4d4d4;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+        }
+
+        /* پیام کپی */
+        .copy-toast-custom {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .copy-toast-custom.show {
+            opacity: 1;
+        }
+
+        /* ریسپانسیو برای موبایل */
+        @media (max-width: 600px) {
+            .code-header-custom {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-buttons-custom {
+                justify-content: center;
+            }
+            .btn-custom {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .code-content-custom {
+                font-size: 12px;
+                padding: 15px;
+            }
+        }
+    </style>
+
+
+    <!-- ====== پیام کپی (مشترک) ====== -->
+    <div class="copy-toast-custom" id="copyToast">✅ کد با موفقیت کپی شد!</div>
+
+    <!-- ====== اسکریپت‌ها ====== -->
+    <script>
+        // ============================================
+        // تابع کمکی برای ایجاد کنترل‌کننده کد
+        // ============================================
+        function createCodeHandler(toggleBtnId, bodyId, contentId, copyBtnId) {
+            const codeBody = document.getElementById(bodyId);
+            const toggleBtn = document.getElementById(toggleBtnId);
+            const copyBtn = document.getElementById(copyBtnId);
+            const codeContent = document.getElementById(contentId);
+            const copyToast = document.getElementById('copyToast');
+
+            // تابع نمایش/مخفی‌سازی
+            function toggleCode() {
+                codeBody.classList.toggle('open');
+                
+                if (codeBody.classList.contains('open')) {
+                    toggleBtn.textContent = '🔼 مخفی‌سازی کد';
+                    toggleBtn.classList.add('active');
+                } else {
+                    toggleBtn.textContent = '🔽 نمایش کد';
+                    toggleBtn.classList.remove('active');
+                }
+            }
+
+            // تابع کپی
+            function copyCode() {
+                const codeText = codeContent.textContent;
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(codeText)
+                        .then(() => showCopySuccess())
+                        .catch(() => fallbackCopy(codeText));
+                } else {
+                    fallbackCopy(codeText);
+                }
+            }
+
+            // روش جایگزین کپی
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    showCopySuccess();
+                } catch (err) {
+                    alert('کپی کردن ناموفق بود. لطفاً به صورت دستی کپی کنید.');
+                }
+                
+                document.body.removeChild(textarea);
+            }
+
+            // نمایش پیام موفقیت
+            function showCopySuccess() {
+                copyToast.classList.add('show');
+                copyBtn.textContent = '✅ کپی شد!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyToast.classList.remove('show');
+                    copyBtn.textContent = '📋 کپی';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }
+
+            // اتصال دکمه‌ها
+            toggleBtn.onclick = toggleCode;
+            copyBtn.onclick = copyCode;
+
+            // پشتیبانی از کیبورد
+            toggleBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') toggleCode();
+            });
+            copyBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') copyCode();
+            });
+
+            // برگرداندن توابع برای استفاده خارجی (اختیاری)
+            return { toggleCode, copyCode };
+        }
+
+        // ============================================
+        // راه‌اندازی هر دو کد
+        // ============================================
+        
+        // کنترل‌کننده کد اول (HTML)
+        createCodeHandler(
+            'toggleBtn1',   // id دکمه نمایش
+            'codeBody1',    // id بدنه کد
+            'codeContent1', // id محتوای کد
+            'copyBtn1'      // id دکمه کپی
+        );
+
+        // کنترل‌کننده کد دوم (CSS)
+        createCodeHandler(
+            'toggleBtn2',
+            'codeBody2',
+            'codeContent2',
+            'copyBtn2'
+        );
+
+        // ============================================
+        // قابلیت کپی با کلیک روی خود کد (اختیاری)
+        // ============================================
+        
+        document.getElementById('codeContent1').addEventListener('dblclick', function() {
+            document.getElementById('copyBtn1').click();
+        });
+
+        document.getElementById('codeContent2').addEventListener('dblclick', function() {
+            document.getElementById('copyBtn2').click();
+        });
+    </script>
