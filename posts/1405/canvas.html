@@ -3,14 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رسم نمودار دوبعدی توابع ریاضی با Canvas</title>
+  <title>رسم نمودار دوبعدی با بازه قابل تنظیم</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -21,27 +16,11 @@
       min-height: 100vh;
       color: white;
       padding: 20px;
-    }
-
-    #info {
-      text-align: center;
-      margin-bottom: 25px;
       direction: rtl;
     }
-
-    #info h2 {
-      margin: 0 0 8px 0;
-      font-size: 26px;
-      color: #ff6b6b;
-      text-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-    }
-
-    #info p {
-      margin: 4px 0;
-      color: #b0b0b0;
-      font-size: 14px;
-    }
-
+    #info { text-align: center; margin-bottom: 20px; }
+    #info h2 { margin: 0 0 8px 0; font-size: 26px; color: #ff6b6b; }
+    #info p { margin: 4px 0; color: #b0b0b0; font-size: 13px; }
     .canvas-wrapper {
       background: rgba(255, 255, 255, 0.03);
       border: 2px solid rgba(255, 107, 107, 0.4);
@@ -49,129 +28,52 @@
       padding: 10px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     }
-
-    canvas {
-      display: block;
-      border-radius: 10px;
-      cursor: grab;
+    canvas { display: block; border-radius: 10px; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+    .controls-panel {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-top: 20px; align-items: center; justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px 25px; border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    canvas:active {
-      cursor: grabbing;
+    .field-group { display: flex; align-items: center; gap: 6px; }
+    .field-group label { font-size: 12px; color: #aaa; }
+    .field-group input[type="text"],
+    .field-group input[type="number"] {
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 107, 107, 0.3);
+      color: #fff; padding: 6px 10px; border-radius: 18px;
+      font-size: 13px; font-family: 'Courier New', monospace;
+      width: 90px; text-align: center; transition: all 0.3s;
     }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 20px;
-      align-items: center;
-      justify-content: center;
-      direction: rtl;
-    }
-
-    .control-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 8px 16px;
-      border-radius: 25px;
-    }
-
-    .control-group label {
-      font-size: 13px;
-      color: #ccc;
-    }
-
-    .control-group input[type="range"] {
-      width: 100px;
-      accent-color: #ff6b6b;
-    }
-
-    .control-group input[type="text"] {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      padding: 8px 14px;
-      border-radius: 20px;
-      width: 250px;
-      font-size: 15px;
-      font-family: 'Courier New', monospace;
-      text-align: left;
-      direction: ltr;
-    }
-
-    .control-group input[type="text"]:focus {
-      outline: none;
-      border-color: #ff6b6b;
-      box-shadow: 0 0 12px rgba(255, 107, 107, 0.4);
-    }
-
+    .field-group input[type="text"] { width: 220px; direction: ltr; text-align: left; }
+    .field-group input:focus { outline: none; border-color: #ff6b6b; box-shadow: 0 0 12px rgba(255, 107, 107, 0.4); }
+    .field-group input[type="number"] { direction: ltr; }
     button {
-      background: #ff6b6b;
-      color: white;
-      border: none;
-      padding: 8px 22px;
-      border-radius: 25px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: bold;
+      background: #ff6b6b; color: white; border: none;
+      padding: 8px 22px; border-radius: 25px; font-size: 14px;
+      cursor: pointer; transition: all 0.3s; font-weight: bold;
     }
-
-    button:hover {
-      background: #ff8787;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .examples {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-      justify-content: center;
-      direction: rtl;
-    }
-
-    .example-btn {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ddd;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 6px 14px;
-      border-radius: 18px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Courier New', monospace;
-    }
-
-    .example-btn:hover {
-      background: rgba(255, 107, 107, 0.3);
-      border-color: #ff6b6b;
-      color: white;
-    }
-
+    button:hover { background: #ff8787; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); }
     .value-display {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 16px;
-      color: #ffd93d;
-      min-height: 24px;
-      direction: rtl;
+      text-align: center; margin-top: 10px; font-size: 15px;
+      color: #ffd93d; min-height: 22px;
     }
+    .examples-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: center; }
+    .example-chip {
+      background: rgba(255, 255, 255, 0.08); color: #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 14px;
+      border-radius: 18px; font-size: 12px; cursor: pointer;
+      transition: all 0.25s; font-family: 'Courier New', monospace; direction: ltr;
+    }
+    .example-chip:hover { background: rgba(255, 107, 107, 0.25); border-color: #ff6b6b; color: #fff; }
   </style>
 </head>
 <body>
   <div id="info">
-    <h2>📐 رسم نمودار دوبعدی توابع ریاضی</h2>
+    <h2>📐 رسم نمودار دوبعدی با بازه دلخواه</h2>
     <p>🖱️ با ماوس بکشید تا جابجا شوید | اسکرول کنید تا زوم کنید</p>
-    <p>📍 موس را روی نمودار نگه دارید تا مختصات دقیق را ببینید</p>
   </div>
 
   <div class="canvas-wrapper">
@@ -180,188 +82,154 @@
 
   <div class="value-display" id="valueDisplay">مختصات: —</div>
 
-  <div class="controls">
-    <div class="control-group">
+  <div class="controls-panel">
+    <div class="field-group">
       <label>f(x) =</label>
       <input type="text" id="functionInput" value="Math.sin(x) * Math.cos(x/2)" dir="ltr">
-      <button id="drawButton">🔄 رسم</button>
     </div>
-    <div class="control-group">
-      <label>🔍 زوم:</label>
-      <input type="range" id="zoomSlider" min="10" max="300" value="60" step="1">
-      <button id="resetButton">↺ بازنشانی</button>
+    <div class="field-group">
+      <label>xMin</label>
+      <input type="number" id="xMinInput" value="-8" step="any">
     </div>
+    <div class="field-group">
+      <label>xMax</label>
+      <input type="number" id="xMaxInput" value="8" step="any">
+    </div>
+    <div class="field-group">
+      <label>yMin</label>
+      <input type="number" id="yMinInput" value="-5" step="any">
+    </div>
+    <div class="field-group">
+      <label>yMax</label>
+      <input type="number" id="yMaxInput" value="5" step="any">
+    </div>
+    <button id="drawButton">🔄 رسم</button>
+    <button id="resetButton" style="background:#475; hover:background:#5a5;">↺ پیش‌فرض</button>
   </div>
 
-  <div class="examples">
-    <span style="color:#aaa; font-size:13px;">مثال‌های آماده:</span>
-    <button class="example-btn" data-func="Math.sqrt(x)">sqrt(x)</button>
-    <button class="example-btn" data-func="Math.sin(x)">sin(x)</button>
-    <button class="example-btn" data-func="Math.cos(x)">cos(x)</button>
-    <button class="example-btn" data-func="Math.tan(x)">tan(x)</button>
-    <button class="example-btn" data-func="x*x">x²</button>
-    <button class="example-btn" data-func="x*x*x - 3*x">x³ - 3x</button>
-    <button class="example-btn" data-func="Math.exp(-x*x/4)*Math.cos(3*x)">e^(-x²/4)·cos(3x)</button>
-    <button class="example-btn" data-func="Math.sin(x) + 0.5*Math.sin(3*x)">sin(x)+½sin(3x)</button>
-    <button class="example-btn" data-func="Math.sin(x)/x">sin(x)/x</button>
-    <button class="example-btn" data-func="1/(1+Math.exp(-x))">1/(1+e⁻ˣ)</button>
+  <div class="examples-row">
+    <span style="color:#888; font-size:12px;">📋 مثال‌ها:</span>
+    <button class="example-chip" data-func="Math.sqrt(x)" data-xmin="-4" data-xmax="16" data-ymin="-4" data-ymax="4">sqrt(x)</button>
+	<button class="example-chip" data-func="Math.sin(x)" data-xmin="-8" data-xmax="8" data-ymin="-3" data-ymax="3">sin(x)</button>
+    <button class="example-chip" data-func="Math.cos(x)" data-xmin="-8" data-xmax="8" data-ymin="-3" data-ymax="3">cos(x)</button>
+    <button class="example-chip" data-func="Math.tan(x)" data-xmin="-6.28" data-xmax="6.28" data-ymin="-10" data-ymax="10">tan(x)</button>
+    <button class="example-chip" data-func="Math.log(x)" data-xmin="-3" data-xmax="10" data-ymin="-5" data-ymax="4">log(x)</button>
+    <button class="example-chip" data-func="x*x" data-xmin="-5" data-xmax="5" data-ymin="-1" data-ymax="15">x²</button>
+	<button class="example-chip" data-func="x*x*x" data-xmin="-8" data-xmax="8" data-ymin="-3" data-ymax="3">x³</button>
+	<button class="example-chip" data-func="x*x*x - 3*x" data-xmin="-8" data-xmax="8" data-ymin="-3" data-ymax="3">x³ - 3x</button>
+    <button class="example-chip" data-func="Math.exp(-x*x/4)*Math.cos(3*x)" data-xmin="-6" data-xmax="6" data-ymin="-1.5" data-ymax="1.5">e^(-x²/4)·cos(3x)</button>
+    <button class="example-chip" data-func="Math.sin(x)/x" data-xmin="-15" data-xmax="15" data-ymin="-0.5" data-ymax="1.2">sin(x)/x</button>
+	<button class="example-chip" data-func="1/(1+Math.exp(-x))" data-xmin="-8" data-xmax="8" data-ymin="-3" data-ymax="3">1/(1+e⁻ˣ)</button>
   </div>
 
   <script>
     (function() {
-      // ==========================================
-      // ۱. گرفتن المان‌های DOM
-      // ==========================================
       const canvas = document.getElementById('graphCanvas');
       const ctx = canvas.getContext('2d');
       const functionInput = document.getElementById('functionInput');
+      const xMinInput = document.getElementById('xMinInput');
+      const xMaxInput = document.getElementById('xMaxInput');
+      const yMinInput = document.getElementById('yMinInput');
+      const yMaxInput = document.getElementById('yMaxInput');
       const drawButton = document.getElementById('drawButton');
-      const zoomSlider = document.getElementById('zoomSlider');
       const resetButton = document.getElementById('resetButton');
       const valueDisplay = document.getElementById('valueDisplay');
-      const exampleButtons = document.querySelectorAll('.example-btn');
+      const exampleChips = document.querySelectorAll('.example-chip');
 
-      // ==========================================
-      // ۲. متغیرهای حالت
-      // ==========================================
-      // محدودهٔ نمایش در دستگاه مختصات ریاضی
-      let xMin = -8;
-      let xMax = 8;
-      let yMin = -5;
-      let yMax = 5;
+      let xMin = -8, xMax = 8, yMin = -5, yMax = 5;
+      let isDragging = false, dragStartX = 0, dragStartY = 0;
+      let dragStartXMin = 0, dragStartXMax = 0, dragStartYMin = 0, dragStartYMax = 0;
+      let mouseX = null, mouseY = null;
 
-      // وضعیت درگ کردن با ماوس
-      let isDragging = false;
-      let dragStartX = 0;
-      let dragStartY = 0;
-      let dragStartXMin = 0;
-      let dragStartXMax = 0;
-      let dragStartYMin = 0;
-      let dragStartYMax = 0;
-
-      // موقعیت ماوس برای نمایش مختصات
-      let mouseX = null;
-      let mouseY = null;
-
-      // ==========================================
-      // ۳. تبدیل مختصات
-      // ==========================================
-      function toCanvasX(mathX) {
-        return ((mathX - xMin) / (xMax - xMin)) * canvas.width;
+      function readBoundsFromInputs() {
+        xMin = parseFloat(xMinInput.value);
+        xMax = parseFloat(xMaxInput.value);
+        yMin = parseFloat(yMinInput.value);
+        yMax = parseFloat(yMaxInput.value);
+        if (isNaN(xMin) || isNaN(xMax) || isNaN(yMin) || isNaN(yMax)) return false;
+        if (xMin >= xMax || yMin >= yMax) {
+          alert('بازه نامعتبر است. مطمئن شوید xMin < xMax و yMin < yMax.');
+          return false;
+        }
+        return true;
       }
 
-      function toCanvasY(mathY) {
-        return canvas.height - ((mathY - yMin) / (yMax - yMin)) * canvas.height;
+      function updateInputsFromBounds() {
+        xMinInput.value = xMin;
+        xMaxInput.value = xMax;
+        yMinInput.value = yMin;
+        yMaxInput.value = yMax;
       }
 
-      function toMathX(canvasX) {
-        return xMin + (canvasX / canvas.width) * (xMax - xMin);
+      function toCanvasX(mathX) { return ((mathX - xMin) / (xMax - xMin)) * canvas.width; }
+      function toCanvasY(mathY) { return canvas.height - ((mathY - yMin) / (yMax - yMin)) * canvas.height; }
+      function toMathX(canvasX) { return xMin + (canvasX / canvas.width) * (xMax - xMin); }
+      function toMathY(canvasY) { return yMin + ((canvas.height - canvasY) / canvas.height) * (yMax - yMin); }
+
+      function niceStep(range) {
+        const roughStep = range / 10;
+        const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+        const residual = roughStep / magnitude;
+        let niceResidual;
+        if (residual <= 1.5) niceResidual = 1;
+        else if (residual <= 3.5) niceResidual = 2;
+        else if (residual <= 7.5) niceResidual = 5;
+        else niceResidual = 10;
+        return niceResidual * magnitude;
       }
 
-      function toMathY(canvasY) {
-        return yMin + ((canvas.height - canvasY) / canvas.height) * (yMax - yMin);
-      }
-
-      // ==========================================
-      // ۴. رسم شبکه و محورها
-      // ==========================================
       function drawGrid() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // پس‌زمینه
         ctx.fillStyle = '#0a0a1a';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // محاسبهٔ فاصلهٔ مناسب برای خطوط شبکه
         const xRange = xMax - xMin;
         const yRange = yMax - yMin;
-
-        function niceStep(range) {
-          const roughStep = range / 10;
-          const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-          const residual = roughStep / magnitude;
-          let niceResidual;
-          if (residual <= 1.5) niceResidual = 1;
-          else if (residual <= 3.5) niceResidual = 2;
-          else if (residual <= 7.5) niceResidual = 5;
-          else niceResidual = 10;
-          return niceResidual * magnitude;
-        }
-
         const xStep = niceStep(xRange);
         const yStep = niceStep(yRange);
 
-        // خطوط شبکه
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
         ctx.lineWidth = 1;
-
-        // خطوط عمودی
         let xStart = Math.ceil(xMin / xStep) * xStep;
         for (let x = xStart; x <= xMax; x += xStep) {
           const cx = toCanvasX(x);
-          ctx.beginPath();
-          ctx.moveTo(cx, 0);
-          ctx.lineTo(cx, canvas.height);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height); ctx.stroke();
         }
-
-        // خطوط افقی
         let yStart = Math.ceil(yMin / yStep) * yStep;
         for (let y = yStart; y <= yMax; y += yStep) {
           const cy = toCanvasY(y);
-          ctx.beginPath();
-          ctx.moveTo(0, cy);
-          ctx.lineTo(canvas.width, cy);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke();
         }
 
-        // محورهای اصلی
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
         ctx.lineWidth = 1.5;
-
-        // محور X
         if (yMin <= 0 && yMax >= 0) {
           const cy = toCanvasY(0);
-          ctx.beginPath();
-          ctx.moveTo(0, cy);
-          ctx.lineTo(canvas.width, cy);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke();
         }
-
-        // محور Y
         if (xMin <= 0 && xMax >= 0) {
           const cx = toCanvasX(0);
-          ctx.beginPath();
-          ctx.moveTo(cx, 0);
-          ctx.lineTo(cx, canvas.height);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height); ctx.stroke();
         }
 
-        // اعداد روی محورها
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.font = '12px "Segoe UI", Tahoma, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-
         for (let x = xStart; x <= xMax; x += xStep) {
           if (Math.abs(x) < xStep / 100) continue;
           const cx = toCanvasX(x);
           const cy = toCanvasY(0);
-          const displayX = Math.abs(x) < 1e-10 ? 0 : parseFloat(x.toFixed(4));
-          ctx.fillText(displayX, cx, cy + 6);
+          ctx.fillText(parseFloat(x.toFixed(4)), cx, cy + 6);
         }
-
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
         for (let y = yStart; y <= yMax; y += yStep) {
           if (Math.abs(y) < yStep / 100) continue;
           const cx = toCanvasX(0);
           const cy = toCanvasY(y);
-          const displayY = Math.abs(y) < 1e-10 ? 0 : parseFloat(y.toFixed(4));
-          ctx.fillText(displayY, cx - 8, cy);
+          ctx.fillText(parseFloat(y.toFixed(4)), cx - 8, cy);
         }
-
-        // صفر
         if (xMin <= 0 && xMax >= 0 && yMin <= 0 && yMax >= 0) {
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.textAlign = 'right';
@@ -370,25 +238,15 @@
         }
       }
 
-      // ==========================================
-      // ۵. ارزیابی تابع
-      // ==========================================
       function evaluateFunction(funcStr, x) {
         try {
           const f = new Function('x', `return ${funcStr};`);
           const result = f(x);
-          if (typeof result !== 'number' || !isFinite(result)) {
-            return NaN;
-          }
+          if (typeof result !== 'number' || !isFinite(result)) return NaN;
           return result;
-        } catch (e) {
-          return NaN;
-        }
+        } catch (e) { return NaN; }
       }
 
-      // ==========================================
-      // ۶. رسم نمودار تابع
-      // ==========================================
       function drawFunction() {
         const funcStr = functionInput.value.trim();
         if (!funcStr) return;
@@ -398,81 +256,43 @@
         ctx.lineWidth = 2.5;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-
-        // ایجاد سایهٔ نئونی
         ctx.shadowColor = 'rgba(255, 107, 107, 0.6)';
         ctx.shadowBlur = 8;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
 
         let firstPoint = true;
         let prevY = null;
-
-        // گام نمونه‌برداری: یک نقطه برای هر پیکسل در عرض
         const step = (xMax - xMin) / canvas.width;
 
         for (let px = 0; px <= canvas.width; px++) {
           const x = toMathX(px);
           const y = evaluateFunction(funcStr, x);
-
-          if (isNaN(y)) {
-            firstPoint = true;
-            prevY = null;
-            continue;
-          }
-
+          if (isNaN(y)) { firstPoint = true; prevY = null; continue; }
           const cy = toCanvasY(y);
-
-          // قطع کردن در لبه‌ها برای جلوگیری از خطوط عجیب
           if (prevY !== null && Math.abs(y - prevY) > (yMax - yMin) * 0.8) {
             firstPoint = true;
           }
-
-          if (firstPoint) {
-            ctx.moveTo(px, Math.max(-1000, Math.min(2000, cy)));
-            firstPoint = false;
-          } else {
-            ctx.lineTo(px, Math.max(-1000, Math.min(2000, cy)));
-          }
-
+          const clampedCy = Math.max(-1000, Math.min(2000, cy));
+          if (firstPoint) { ctx.moveTo(px, clampedCy); firstPoint = false; }
+          else { ctx.lineTo(px, clampedCy); }
           prevY = y;
         }
-
         ctx.stroke();
-
-        // حذف سایه برای بقیهٔ رسم‌ها
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
       }
 
-      // ==========================================
-      // ۷. نمایش مختصات زیر ماوس
-      // ==========================================
       function drawCrosshair() {
         if (mouseX === null || mouseY === null) return;
         if (mouseX < 0 || mouseX > canvas.width || mouseY < 0 || mouseY > canvas.height) return;
-
         const mathX = toMathX(mouseX);
         const mathY = toMathY(mouseY);
-
-        // خطوط نقطه‌چین
         ctx.save();
         ctx.setLineDash([4, 6]);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
         ctx.lineWidth = 1;
-
-        ctx.beginPath();
-        ctx.moveTo(mouseX, 0);
-        ctx.lineTo(mouseX, canvas.height);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, mouseY);
-        ctx.lineTo(canvas.width, mouseY);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(mouseX, 0); ctx.lineTo(mouseX, canvas.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, mouseY); ctx.lineTo(canvas.width, mouseY); ctx.stroke();
         ctx.restore();
-
-        // دایره در نقطهٔ تقاطع
         ctx.beginPath();
         ctx.arc(mouseX, mouseY, 5, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(255, 107, 107, 0.7)';
@@ -481,170 +301,104 @@
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // به‌روزرسانی نمایش مختصات
         const funcStr = functionInput.value.trim();
         let funcValue = '—';
         if (funcStr) {
           const val = evaluateFunction(funcStr, mathX);
-          if (!isNaN(val)) {
-            funcValue = val.toFixed(6);
-          }
+          if (!isNaN(val)) funcValue = val.toFixed(6);
         }
-        valueDisplay.innerHTML = 
-          `📍 x = ${mathX.toFixed(4)} | y = ${mathY.toFixed(4)} | f(x) = ${funcValue}`;
+        valueDisplay.innerHTML = `📍 x = ${mathX.toFixed(4)} | y = ${mathY.toFixed(4)} | f(x) = ${funcValue}`;
       }
 
-      // ==========================================
-      // ۸. تابع اصلی رسم
-      // ==========================================
       function render() {
         drawGrid();
         drawFunction();
         drawCrosshair();
       }
 
-      // ==========================================
-      // ۹. رویدادهای ماوس
-      // ==========================================
       canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
         dragStartX = e.offsetX;
         dragStartY = e.offsetY;
-        dragStartXMin = xMin;
-        dragStartXMax = xMax;
-        dragStartYMin = yMin;
-        dragStartYMax = yMax;
+        dragStartXMin = xMin; dragStartXMax = xMax;
+        dragStartYMin = yMin; dragStartYMax = yMax;
         canvas.style.cursor = 'grabbing';
       });
-
-      window.addEventListener('mouseup', () => {
-        isDragging = false;
-        canvas.style.cursor = 'grab';
-      });
-
+      window.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'grab'; });
       window.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
         const canvasX = e.clientX - rect.left;
         const canvasY = e.clientY - rect.top;
-
         if (isDragging) {
           const dx = canvasX - dragStartX;
           const dy = canvasY - dragStartY;
-
           const xRange = dragStartXMax - dragStartXMin;
           const yRange = dragStartYMax - dragStartYMin;
-
           const dxMath = -(dx / canvas.width) * xRange;
           const dyMath = (dy / canvas.height) * yRange;
-
           xMin = dragStartXMin + dxMath;
           xMax = dragStartXMax + dxMath;
           yMin = dragStartYMin + dyMath;
           yMax = dragStartYMax + dyMath;
-
+          updateInputsFromBounds();
           render();
         } else {
-          mouseX = canvasX;
-          mouseY = canvasY;
+          mouseX = canvasX; mouseY = canvasY;
           render();
         }
       });
 
       canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
-
         const rect = canvas.getBoundingClientRect();
         const mouseCanvasX = e.clientX - rect.left;
         const mouseCanvasY = e.clientY - rect.top;
-
         const mathX = toMathX(mouseCanvasX);
         const mathY = toMathY(mouseCanvasY);
-
         const zoomFactor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
-
-        const newXMin = mathX - (mathX - xMin) * zoomFactor;
-        const newXMax = mathX + (xMax - mathX) * zoomFactor;
-        const newYMin = mathY - (mathY - yMin) * zoomFactor;
-        const newYMax = mathY + (yMax - mathY) * zoomFactor;
-
-        // محدود کردن زوم
-        const newXRange = newXMax - newXMin;
-        const newYRange = newYMax - newYMin;
+        xMin = mathX - (mathX - xMin) * zoomFactor;
+        xMax = mathX + (xMax - mathX) * zoomFactor;
+        yMin = mathY - (mathY - yMin) * zoomFactor;
+        yMax = mathY + (yMax - mathY) * zoomFactor;
+        const newXRange = xMax - xMin;
+        const newYRange = yMax - yMin;
         if (newXRange < 0.01 || newXRange > 1000 || newYRange < 0.01 || newYRange > 1000) {
+          // revert
+          xMin = mathX - (mathX - xMin) / zoomFactor;
+          xMax = mathX + (xMax - mathX) / zoomFactor;
+          yMin = mathY - (mathY - yMin) / zoomFactor;
+          yMax = mathY + (yMax - mathY) / zoomFactor;
           return;
         }
-
-        xMin = newXMin;
-        xMax = newXMax;
-        yMin = newYMin;
-        yMax = newYMax;
-
-        // به‌روزرسانی اسلایدر
-        const avgRange = (newXRange + newYRange) / 2;
-        zoomSlider.value = Math.round(200 / avgRange);
-
+        updateInputsFromBounds();
         render();
       });
 
-      // ==========================================
-      // ۱۰. رویدادهای کنترلی
-      // ==========================================
       drawButton.addEventListener('click', () => {
-        render();
+        if (readBoundsFromInputs()) render();
       });
-
-      functionInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          render();
-        }
-      });
-
-      zoomSlider.addEventListener('input', () => {
-        const val = parseInt(zoomSlider.value);
-        const targetRange = 200 / val;
-
-        const centerX = (xMin + xMax) / 2;
-        const centerY = (yMin + yMax) / 2;
-
-        xMin = centerX - targetRange / 2;
-        xMax = centerX + targetRange / 2;
-        yMin = centerY - targetRange / 2;
-        yMax = centerY + targetRange / 2;
-
-        render();
-      });
-
       resetButton.addEventListener('click', () => {
-        xMin = -8;
-        xMax = 8;
-        yMin = -5;
-        yMax = 5;
-        zoomSlider.value = 60;
+        xMin = -8; xMax = 8; yMin = -5; yMax = 5;
+        updateInputsFromBounds();
         render();
       });
+      functionInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { if (readBoundsFromInputs()) render(); }
+      });
 
-      // دکمه‌های مثال
-      exampleButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const func = btn.getAttribute('data-func');
-          functionInput.value = func;
-          xMin = -8;
-          xMax = 8;
-          yMin = -5;
-          yMax = 5;
-          zoomSlider.value = 60;
-          render();
+      exampleChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          functionInput.value = chip.getAttribute('data-func');
+          xMinInput.value = chip.getAttribute('data-xmin');
+          xMaxInput.value = chip.getAttribute('data-xmax');
+          yMinInput.value = chip.getAttribute('data-ymin');
+          yMaxInput.value = chip.getAttribute('data-ymax');
+          if (readBoundsFromInputs()) render();
         });
       });
 
-      // ==========================================
-      // ۱۱. رسم اولیه
-      // ==========================================
       render();
-
-      console.log('✅ نمودار دوبعدی با Canvas آماده است!');
-      console.log('🖱️  با ماوس بکشید و اسکرول کنید.');
-      console.log('✏️  تابع خود را در کادر وارد کنید.');
+      console.log('✅ رسم‌کنندهٔ دوبعدی با بازه قابل تنظیم آماده است.');
     })();
   </script>
 </body>

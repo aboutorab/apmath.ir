@@ -3,14 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رسم نمودار سه‌بعدی تعاملی با WebGL</title>
+  <title>رسم نمودار سه‌بعدی با بازه قابل تنظیم</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,174 +18,104 @@
       padding: 20px;
       direction: rtl;
     }
-
-    #info {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    #info h2 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
-      color: #e94560;
-      text-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
-    }
-
-    #info p {
-      margin: 4px 0;
-      color: #aaa;
-      font-size: 13px;
-    }
-
+    #info { text-align: center; margin-bottom: 20px; }
+    #info h2 { margin: 0 0 8px 0; font-size: 28px; color: #e94560; text-shadow: 0 0 20px rgba(233, 69, 96, 0.4); }
+    #info p { margin: 4px 0; color: #aaa; font-size: 13px; }
     .controls-panel {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-bottom: 20px; align-items: center; justify-content: center;
       background: rgba(255, 255, 255, 0.05);
-      padding: 15px 25px;
-      border-radius: 40px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 25px; border-radius: 40px;
+      backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    .controls-panel label {
-      font-size: 16px;
-      font-weight: bold;
-      color: #e94560;
-    }
-
-    .controls-panel input[type="text"] {
+    .field-group { display: flex; align-items: center; gap: 6px; }
+    .field-group label { font-size: 12px; color: #ccc; }
+    .field-group input[type="text"],
+    .field-group input[type="number"] {
       background: rgba(0, 0, 0, 0.4);
       border: 2px solid rgba(233, 69, 96, 0.4);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 25px;
-      width: 350px;
-      font-size: 16px;
-      font-family: 'Courier New', monospace;
-      direction: ltr;
-      text-align: left;
-      transition: all 0.3s;
+      color: #fff; padding: 8px 12px; border-radius: 20px;
+      font-size: 14px; font-family: 'Courier New', monospace;
+      text-align: center; transition: all 0.3s;
     }
-
-    .controls-panel input[type="text"]:focus {
-      outline: none;
-      border-color: #e94560;
-      box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
-    }
-
+    .field-group input[type="text"] { width: 260px; direction: ltr; text-align: left; }
+    .field-group input[type="number"] { width: 75px; direction: ltr; }
+    .field-group input:focus { outline: none; border-color: #e94560; box-shadow: 0 0 15px rgba(233, 69, 96, 0.4); }
     .controls-panel button {
-      background: #e94560;
-      color: white;
-      border: none;
-      padding: 10px 25px;
-      border-radius: 25px;
-      font-size: 15px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
-      letter-spacing: 0.5px;
+      background: #e94560; color: white; border: none;
+      padding: 9px 22px; border-radius: 25px; font-size: 14px;
+      cursor: pointer; font-weight: bold; transition: all 0.3s;
     }
-
-    .controls-panel button:hover {
-      background: #ff6b81;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5);
-    }
-
-    .controls-panel button:active {
-      transform: translateY(0);
-    }
-
+    .controls-panel button:hover { background: #ff6b81; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5); }
     #container {
-      width: 820px;
-      height: 580px;
+      width: 820px; height: 580px;
       border: 2px solid rgba(233, 69, 96, 0.5);
-      border-radius: 16px;
-      overflow: hidden;
+      border-radius: 16px; overflow: hidden;
       box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
-      cursor: grab;
-      background: #0a0a1a;
+      cursor: grab; background: #0a0a1a;
     }
-
-    #container:active {
-      cursor: grabbing;
-    }
-
-    .examples-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 15px;
-      justify-content: center;
-    }
-
+    #container:active { cursor: grabbing; }
+    .examples-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; justify-content: center; }
     .example-chip {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ccc;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 7px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.25s;
-      font-family: 'Courier New', monospace;
-      direction: ltr;
+      background: rgba(255, 255, 255, 0.08); color: #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.15); padding: 7px 16px;
+      border-radius: 20px; font-size: 13px; cursor: pointer;
+      transition: all 0.25s; font-family: 'Courier New', monospace; direction: ltr;
     }
-
-    .example-chip:hover {
-      background: rgba(233, 69, 96, 0.25);
-      border-color: #e94560;
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
-    }
-
+    .example-chip:hover { background: rgba(233, 69, 96, 0.25); border-color: #e94560; color: #fff; transform: translateY(-2px); }
     .status-message {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #ffd93d;
-      min-height: 20px;
-      text-align: center;
+      margin-top: 12px; font-size: 14px; color: #ffd93d;
+      min-height: 20px; text-align: center;
     }
-
-    .status-message.error {
-      color: #ff4757;
-    }
+    .status-message.error { color: #ff4757; }
   </style>
 </head>
 <body>
   <div id="info">
-    <h2>🌐 رسم‌کنندهٔ سه‌بعدی توابع ریاضی</h2>
+    <h2>🌐 رسم‌کنندهٔ سه‌بعدی با بازه دلخواه</h2>
     <p>🖱️ چرخش: کلیک چپ + کشیدن | 🔍 زوم: اسکرول | ✋ جابجایی: کلیک راست + کشیدن</p>
-    <p>✏️ تابع f(x, y) را وارد کنید و کلید Enter یا دکمهٔ رسم را بزنید</p>
+    <p>✏️ تابع f(x, y) و بازه‌های x و y را وارد کنید، سپس Enter بزنید</p>
   </div>
 
   <div id="container"></div>
 
-  <div class="status-message" id="statusMessage">✅ سطح فعلی: z = sin(x² + y²)</div>
-  <br>
+  <div class="status-message" id="statusMessage">✅ سطح فعلی: z = sin(x² + y²)</div><br>
   
   <div class="controls-panel">
-    <label>f(x, y) =</label>
-    <input type="text" id="functionInput" value="Math.sin(x*x + y*y)" placeholder="مثلاً: Math.cos(x)*Math.sin(y)" dir="ltr">
+    <div class="field-group">
+      <label>f(x, y) =</label>
+      <input type="text" id="functionInput" value="Math.sin(x*x + y*y)" dir="ltr">
+    </div>
+    <div class="field-group">
+      <label>xMin</label>
+      <input type="number" id="xMinInput" value="-4" step="any">
+    </div>
+    <div class="field-group">
+      <label>xMax</label>
+      <input type="number" id="xMaxInput" value="4" step="any">
+    </div>
+    <div class="field-group">
+      <label>yMin</label>
+      <input type="number" id="yMinInput" value="-4" step="any">
+    </div>
+    <div class="field-group">
+      <label>yMax</label>
+      <input type="number" id="yMaxInput" value="4" step="any">
+    </div>
     <button id="drawButton">✨ رسم کن</button>
+    <button id="resetButton" style="background:#475;">↺ پیش‌فرض</button>
   </div>
 
   <div class="examples-row">
-    <span style="color:#888; font-size:12px; margin-left:5px;">📋 مثال‌های آماده:</span>
-    <button class="example-chip" data-func="Math.sqrt(x*x + y*y)">sqrt(x² + y²)</button>
-    <button class="example-chip" data-func="Math.sin(x*x + y*y)">sin(x² + y²)</button>
-    <button class="example-chip" data-func="Math.cos(x)*Math.sin(y)">cos(x)·sin(y)</button>
-    <button class="example-chip" data-func="(x*x - y*y)/4">(x² - y²)/4</button>
-    <button class="example-chip" data-func="(x*x + y*y)/4">(x² + y²)/4</button>
-    <button class="example-chip" data-func="Math.exp(-(x*x + y*y)/4)">exp(-(x²+y²)/4)</button>
-    <button class="example-chip" data-func="Math.sin(x) + Math.cos(y)">sin(x)+cos(y)</button>
-    <button class="example-chip" data-func="Math.sin(Math.sqrt(x*x + y*y))">sin(√(x²+y²))</button>
-    <button class="example-chip" data-func="Math.cos(Math.abs(x) + Math.abs(y))">cos(|x|+|y|)</button>
+    <span style="color:#888; font-size:12px;">📋 مثال‌ها:</span>
+	<button class="example-chip" data-func="Math.sqrt(x*x + y*y)" data-xmin="-4" data-xmax="4" data-ymin="-4" data-ymax="4">sqrt(x² + y²)</button>
+    <button class="example-chip" data-func="Math.sin(x*x + y*y)" data-xmin="-4" data-xmax="4" data-ymin="-4" data-ymax="4">sin(x² + y²)</button>
+    <button class="example-chip" data-func="Math.cos(x)*Math.sin(y)" data-xmin="-5" data-xmax="5" data-ymin="-5" data-ymax="5">cos(x)·sin(y)</button>
+	<button class="example-chip" data-func="Math.sin(x) + Math.cos(y)" data-xmin="-5" data-xmax="5" data-ymin="-5" data-ymax="5">sin(x)+cos(y)</button>
+    <button class="example-chip" data-func="Math.sin(Math.sqrt(x*x + y*y))" data-xmin="-8" data-xmax="8" data-ymin="-8" data-ymax="8">sin(√(x²+y²))</button>
+    <button class="example-chip" data-func="(x*x - y*y)/4" data-xmin="-6" data-xmax="6" data-ymin="-6" data-ymax="6">(x² - y²)/4</button>
+    <button class="example-chip" data-func="Math.exp(-(x*x + y*y)/4)" data-xmin="-5" data-xmax="5" data-ymin="-5" data-ymax="5">exp(-(x²+y²)/4)</button>
+    <button class="example-chip" data-func="Math.cos(Math.abs(x) + Math.abs(y))" data-xmin="-5" data-xmax="5" data-ymin="-5" data-ymax="5">cos(|x|+|y|)</button>
   </div>
 
   <script type="importmap">
@@ -206,28 +131,22 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // ==========================================
-    // ۱. المان‌های DOM
-    // ==========================================
     const container = document.getElementById('container');
     const functionInput = document.getElementById('functionInput');
+    const xMinInput = document.getElementById('xMinInput');
+    const xMaxInput = document.getElementById('xMaxInput');
+    const yMinInput = document.getElementById('yMinInput');
+    const yMaxInput = document.getElementById('yMaxInput');
     const drawButton = document.getElementById('drawButton');
+    const resetButton = document.getElementById('resetButton');
     const statusMessage = document.getElementById('statusMessage');
     const exampleChips = document.querySelectorAll('.example-chip');
 
-    // ==========================================
-    // ۲. صحنه، دوربین، رندرر
-    // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a1a);
 
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      container.clientWidth / container.clientHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(6, 5, 6);
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(8, 6, 8);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -235,9 +154,6 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // ==========================================
-    // ۳. کنترل‌های چرخش
-    // ==========================================
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
@@ -247,105 +163,74 @@
     controls.target.set(0, 0, 0);
     controls.update();
 
-    // ==========================================
-    // ۴. نورپردازی
-    // ==========================================
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight1.position.set(1, 1, 1);
+    scene.add(dirLight1);
+    const dirLight2 = new THREE.DirectionalLight(0x4488ff, 0.4);
+    dirLight2.position.set(-1, -0.5, -0.5);
+    scene.add(dirLight2);
 
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight1.position.set(1, 1, 1);
-    scene.add(directionalLight1);
-
-    const directionalLight2 = new THREE.DirectionalLight(0x4488ff, 0.4);
-    directionalLight2.position.set(-1, -0.5, -0.5);
-    scene.add(directionalLight2);
-
-    // ==========================================
-    // ۵. اضافه کردن محورها و صفحهٔ کمکی
-    // ==========================================
     function createAxes(size) {
-      // حذف محورهای قبلی (اگر وجود دارند)
-      const oldAxes = scene.getObjectByName('axesGroup');
-      if (oldAxes) scene.remove(oldAxes);
-
+      const old = scene.getObjectByName('axesGroup');
+      if (old) scene.remove(old);
       const axesGroup = new THREE.Group();
       axesGroup.name = 'axesGroup';
-      const axisLength = size + 0.8;
-      const axisThickness = 0.03;
-
-      const xAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
-      const xAxisMat = new THREE.MeshBasicMaterial({ color: 0xff4444 });
-      const xAxis = new THREE.Mesh(xAxisGeo, xAxisMat);
-      xAxis.rotation.z = -Math.PI / 2;
-      axesGroup.add(xAxis);
-
-      const yAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
-      const yAxisMat = new THREE.MeshBasicMaterial({ color: 0x44ff44 });
-      const yAxis = new THREE.Mesh(yAxisGeo, yAxisMat);
-      axesGroup.add(yAxis);
-
-      const zAxisGeo = new THREE.CylinderGeometry(axisThickness, axisThickness, axisLength * 2, 8);
-      const zAxisMat = new THREE.MeshBasicMaterial({ color: 0x4444ff });
-      const zAxis = new THREE.Mesh(zAxisGeo, zAxisMat);
-      zAxis.rotation.x = Math.PI / 2;
-      axesGroup.add(zAxis);
-
+      const len = size + 0.8;
+      const thick = 0.03;
+      const xGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
+      const xMesh = new THREE.Mesh(xGeo, new THREE.MeshBasicMaterial({ color: 0xff4444 }));
+      xMesh.rotation.z = -Math.PI / 2;
+      axesGroup.add(xMesh);
+      const yGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
+      const yMesh = new THREE.Mesh(yGeo, new THREE.MeshBasicMaterial({ color: 0x44ff44 }));
+      axesGroup.add(yMesh);
+      const zGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
+      const zMesh = new THREE.Mesh(zGeo, new THREE.MeshBasicMaterial({ color: 0x4444ff }));
+      zMesh.rotation.x = Math.PI / 2;
+      axesGroup.add(zMesh);
       scene.add(axesGroup);
     }
 
     function createGrid(size) {
-      const oldGrid = scene.getObjectByName('gridHelper');
-      if (oldGrid) scene.remove(oldGrid);
-
+      const old = scene.getObjectByName('gridHelper');
+      if (old) scene.remove(old);
       const gridHelper = new THREE.GridHelper(size * 2, 20, 0x444466, 0x222244);
       gridHelper.name = 'gridHelper';
-      gridHelper.position.y = -size - 0.3;
+      gridHelper.position.y = -size - 0.5;
       scene.add(gridHelper);
     }
 
-    // ==========================================
-    // ۶. کامپایل تابع از رشتهٔ ورودی
-    // ==========================================
     function compileFunction(funcStr) {
       try {
-        // ساخت تابعی با دو آرگومان x و y
         const f = new Function('x', 'y', `return ${funcStr};`);
-        // تست با یک مقدار ساده
-        const testResult = f(0, 0);
-        if (typeof testResult !== 'number' || !isFinite(testResult)) {
-          return { error: 'تابع باید یک عدد برگرداند. خروجی تابع شما برای (0,0) معتبر نیست.' };
+        const test = f(0, 0);
+        if (typeof test !== 'number' || !isFinite(test)) {
+          return { error: 'تابع باید یک عدد برگرداند.' };
         }
         return { func: f, error: null };
       } catch (e) {
-        return { error: `خطا در تجزیهٔ تابع: ${e.message}` };
+        return { error: `خطا در تجزیه: ${e.message}` };
       }
     }
 
-    // ==========================================
-    // ۷. ساخت هندسهٔ سطح از تابع
-    // ==========================================
-    function createSurfaceGeometry(func, size, segments) {
+    function createSurfaceGeometry(func, xMin, xMax, yMin, yMax, segments) {
+      const xRange = xMax - xMin;
+      const yRange = yMax - yMin;
       const geometry = new THREE.BufferGeometry();
       const vertices = [];
       const colors = [];
       const indices = [];
 
-      // ابتدا یک بار همهٔ zها را محاسبه می‌کنیم تا min و max را پیدا کنیم
       const allZ = [];
       for (let i = 0; i <= segments; i++) {
-        const x = -size + (i / segments) * 2 * size;
+        const x = xMin + (i / segments) * xRange;
         for (let j = 0; j <= segments; j++) {
-          const y = -size + (j / segments) * 2 * size;
+          const y = yMin + (j / segments) * yRange;
           let z;
-          try {
-            z = func(x, y);
-          } catch (e) {
-            z = NaN;
-          }
-          if (typeof z !== 'number' || !isFinite(z)) {
-            z = 0; // مقدار پیش‌فرض برای نقاط نامعتبر
-          }
+          try { z = func(x, y); } catch (e) { z = NaN; }
+          if (typeof z !== 'number' || !isFinite(z)) z = 0;
           allZ.push(z);
         }
       }
@@ -353,45 +238,29 @@
       const validZ = allZ.filter(v => isFinite(v));
       let zMin = Math.min(...validZ);
       let zMax = Math.max(...validZ);
-      
-      // اگر همهٔ مقادیر یکسان بودند، بازه را کمی باز می‌کنیم
-      if (zMax - zMin < 0.001) {
-        zMin -= 0.5;
-        zMax += 0.5;
-      }
+      if (zMax - zMin < 0.001) { zMin -= 0.5; zMax += 0.5; }
 
-      // تولید رئوس و رنگ‌ها
       let idx = 0;
       for (let i = 0; i <= segments; i++) {
-        const x = -size + (i / segments) * 2 * size;
+        const x = xMin + (i / segments) * xRange;
         for (let j = 0; j <= segments; j++) {
-          const y = -size + (j / segments) * 2 * size;
-          const z = allZ[idx];
-          idx++;
-
-          vertices.push(x, z, y); // توجه: محور Y در Three.js عمودی است
-
-          // رنگ‌آمیزی بر اساس ارتفاع نرمال‌شده
-          const normalizedZ = (z - zMin) / (zMax - zMin); // بین 0 و 1
-          const clampedZ = Math.max(0, Math.min(1, normalizedZ));
-
+          const y = yMin + (j / segments) * yRange;
+          const z = allZ[idx++];
+          vertices.push(x, z, y);
+          const normZ = (z - zMin) / (zMax - zMin);
+          const c = Math.max(0, Math.min(1, normZ));
           let r, g, b;
-          if (clampedZ < 0.5) {
-            const t = clampedZ * 2;
-            r = 0.1;
-            g = t;
-            b = 1 - t;
+          if (c < 0.5) {
+            const t = c * 2;
+            r = 0.1; g = t; b = 1 - t;
           } else {
-            const t = (clampedZ - 0.5) * 2;
-            r = t;
-            g = 1 - t;
-            b = 0.1;
+            const t = (c - 0.5) * 2;
+            r = t; g = 1 - t; b = 0.1;
           }
           colors.push(r, g, b);
         }
       }
 
-      // تولید اندیس‌های مثلث‌ها
       for (let i = 0; i < segments; i++) {
         for (let j = 0; j < segments; j++) {
           const a = i * (segments + 1) + j;
@@ -407,24 +276,33 @@
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
       geometry.setIndex(indices);
       geometry.computeVertexNormals();
-
       return geometry;
     }
 
-    // ==========================================
-    // ۸. به‌روزرسانی سطح (حذف قدیمی و ساخت جدید)
-    // ==========================================
-    const SIZE = 4;
     const SEGMENTS = 100;
 
     function updateSurface(funcStr) {
-      // حذف سطح و وایرفریم قدیمی
+      const xMin = parseFloat(xMinInput.value);
+      const xMax = parseFloat(xMaxInput.value);
+      const yMin = parseFloat(yMinInput.value);
+      const yMax = parseFloat(yMaxInput.value);
+
+      if (isNaN(xMin) || isNaN(xMax) || isNaN(yMin) || isNaN(yMax)) {
+        statusMessage.textContent = '❌ بازه‌ها باید عدد باشند.';
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+      if (xMin >= xMax || yMin >= yMax) {
+        statusMessage.textContent = '❌ بازه نامعتبر: xMin < xMax و yMin < yMax الزامی است.';
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+
       const oldSurface = scene.getObjectByName('surfaceMesh');
       if (oldSurface) scene.remove(oldSurface);
-      const oldWireframe = scene.getObjectByName('surfaceWireframe');
-      if (oldWireframe) scene.remove(oldWireframe);
+      const oldWire = scene.getObjectByName('surfaceWireframe');
+      if (oldWire) scene.remove(oldWire);
 
-      // کامپایل تابع
       const { func, error } = compileFunction(funcStr);
       if (error) {
         statusMessage.textContent = '❌ ' + error;
@@ -432,53 +310,40 @@
         return false;
       }
 
-      // ساخت هندسه
       let geometry;
       try {
-        geometry = createSurfaceGeometry(func, SIZE, SEGMENTS);
+        geometry = createSurfaceGeometry(func, xMin, xMax, yMin, yMax, SEGMENTS);
       } catch (e) {
         statusMessage.textContent = '❌ خطا در ساخت سطح: ' + e.message;
         statusMessage.className = 'status-message error';
         return false;
       }
 
-      // ساخت مش
       const material = new THREE.MeshStandardMaterial({
         vertexColors: true,
         side: THREE.DoubleSide,
         roughness: 0.4,
         metalness: 0.1,
-        flatShading: false,
       });
-
       const surface = new THREE.Mesh(geometry, material);
       surface.name = 'surfaceMesh';
       scene.add(surface);
 
-      // ساخت وایرفریم
-      const wireframeGeometry = new THREE.EdgesGeometry(geometry);
-      const wireframeMaterial = new THREE.LineBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0.12,
-      });
-      const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
-      wireframe.name = 'surfaceWireframe';
-      scene.add(wireframe);
+      const wireGeo = new THREE.EdgesGeometry(geometry);
+      const wireMat = new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.12 });
+      const wire = new THREE.LineSegments(wireGeo, wireMat);
+      wire.name = 'surfaceWireframe';
+      scene.add(wire);
 
-      // به‌روزرسانی محورها و شبکه
-      createAxes(SIZE);
-      createGrid(SIZE);
+      const maxSize = Math.max(xMax - xMin, yMax - yMin);
+      createAxes(maxSize);
+      createGrid(maxSize);
 
-      // پیام موفقیت
-      statusMessage.textContent = '✅ سطح فعلی: z = ' + funcStr;
+      statusMessage.textContent = '✅ سطح فعلی: z = ' + funcStr + ' | بازه: [' + xMin + ', ' + xMax + '] × [' + yMin + ', ' + yMax + ']';
       statusMessage.className = 'status-message';
       return true;
     }
 
-    // ==========================================
-    // ۹. رویدادها
-    // ==========================================
     function handleDraw() {
       const funcStr = functionInput.value.trim();
       if (!funcStr) {
@@ -490,52 +355,45 @@
     }
 
     drawButton.addEventListener('click', handleDraw);
+    functionInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleDraw(); });
 
-    functionInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        handleDraw();
-      }
+    resetButton.addEventListener('click', () => {
+      functionInput.value = 'Math.sin(x*x + y*y)';
+      xMinInput.value = -4;
+      xMaxInput.value = 4;
+      yMinInput.value = -4;
+      yMaxInput.value = 4;
+      updateSurface(functionInput.value);
     });
 
-    // دکمه‌های مثال
     exampleChips.forEach(chip => {
       chip.addEventListener('click', () => {
-        const func = chip.getAttribute('data-func');
-        functionInput.value = func;
-        updateSurface(func);
+        functionInput.value = chip.getAttribute('data-func');
+        xMinInput.value = chip.getAttribute('data-xmin');
+        xMaxInput.value = chip.getAttribute('data-xmax');
+        yMinInput.value = chip.getAttribute('data-ymin');
+        yMaxInput.value = chip.getAttribute('data-ymax');
+        updateSurface(functionInput.value);
       });
     });
 
-    // ==========================================
-    // ۱۰. مدیریت تغییر اندازهٔ پنجره
-    // ==========================================
     window.addEventListener('resize', () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      camera.aspect = width / height;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+      renderer.setSize(w, h);
     });
 
-    // ==========================================
-    // ۱۱. حلقهٔ انیمیشن
-    // ==========================================
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
     }
 
-    // ==========================================
-    // ۱۲. راه‌اندازی اولیه
-    // ==========================================
-    const initialFunc = functionInput.value.trim();
-    updateSurface(initialFunc);
+    updateSurface(functionInput.value);
     animate();
-
-    console.log('✅ رسم‌کنندهٔ سه‌بعدی تعاملی آماده است!');
-    console.log('✏️  تابع f(x, y) را تغییر دهید و Enter بزنید.');
-    console.log('🖱️  با ماوس بچرخانید و زوم کنید.');
+    console.log('✅ رسم‌کنندهٔ سه‌بعدی با بازه قابل تنظیم آماده است.');
   </script>
 </body>
 </html>
