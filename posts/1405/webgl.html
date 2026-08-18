@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رسم نمودار سه‌بعدی با بازه قابل تنظیم</title>
+  <title>رسم نمودار سه‌بعدی با محورهای مدرج و دقت قابل تنظیم</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -72,15 +72,17 @@
 </head>
 <body>
   <div id="info">
-    <h2>🌐 رسم‌کنندهٔ سه‌بعدی با بازه دلخواه</h2>
+    <h2>🌐 رسم‌کنندهٔ سه‌بعدی با محورهای مدرج</h2>
     <p>🖱️ چرخش: کلیک چپ + کشیدن | 🔍 زوم: اسکرول | ✋ جابجایی: کلیک راست + کشیدن</p>
-    <p>✏️ تابع f(x, y) و بازه‌های x و y را وارد کنید، سپس Enter بزنید</p>
+    <p>✏️ تابع f(x, y)، بازه‌ها و دقت را وارد کنید، سپس Enter بزنید</p>
   </div>
 
   <div id="container"></div>
 
-  <div class="status-message" id="statusMessage">✅ سطح فعلی: z = sin(x² + y²)</div><br>
+  <div class="status-message" id="statusMessage">✅ سطح فعلی: z = sin(x² + y²)</div>
   
+  <br>
+
   <div class="controls-panel">
     <div class="field-group">
       <label>f(x, y) =</label>
@@ -101,6 +103,10 @@
     <div class="field-group">
       <label>yMax</label>
       <input type="number" id="yMaxInput" value="4" step="any">
+    </div>
+    <div class="field-group">
+      <label>🔬 دقت (بخش‌ها):</label>
+      <input type="number" id="segmentsInput" value="80" min="5" max="400" step="1">
     </div>
     <button id="drawButton">✨ رسم کن</button>
     <button id="resetButton" style="background:#475;">↺ پیش‌فرض</button>
@@ -131,22 +137,25 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    // ========== DOM Elements ==========
     const container = document.getElementById('container');
     const functionInput = document.getElementById('functionInput');
     const xMinInput = document.getElementById('xMinInput');
     const xMaxInput = document.getElementById('xMaxInput');
     const yMinInput = document.getElementById('yMinInput');
     const yMaxInput = document.getElementById('yMaxInput');
+    const segmentsInput = document.getElementById('segmentsInput');
     const drawButton = document.getElementById('drawButton');
     const resetButton = document.getElementById('resetButton');
     const statusMessage = document.getElementById('statusMessage');
     const exampleChips = document.querySelectorAll('.example-chip');
 
+    // ========== Scene Setup ==========
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a1a);
 
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(8, 6, 8);
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 2000);
+    camera.position.set(10, 7, 10);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -163,6 +172,7 @@
     controls.target.set(0, 0, 0);
     controls.update();
 
+    // ========== Lighting ==========
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
     const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -172,27 +182,141 @@
     dirLight2.position.set(-1, -0.5, -0.5);
     scene.add(dirLight2);
 
-    function createAxes(size) {
-      const old = scene.getObjectByName('axesGroup');
-      if (old) scene.remove(old);
+    // ========== Helper: Nice Step ==========
+    function niceStep(range, targetTicks) {
+      const roughStep = range / targetTicks;
+      const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+      const residual = roughStep / magnitude;
+      let niceResidual;
+      if (residual <= 1.5) niceResidual = 1;
+      else if (residual <= 3.5) niceResidual = 2;
+      else if (residual <= 7.5) niceResidual = 5;
+      else niceResidual = 10;
+      return niceResidual * magnitude;
+    }
+
+    // ========== Graduated Axes ==========
+    function createGraduatedAxes(xMin, xMax, yMin, yMax, zMin, zMax) {
+      // حذف گروه قدیمی محورها
+      const oldAxes = scene.getObjectByName('axesGroup');
+      if (oldAxes) scene.remove(oldAxes);
+
       const axesGroup = new THREE.Group();
       axesGroup.name = 'axesGroup';
-      const len = size + 0.8;
-      const thick = 0.03;
-      const xGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
-      const xMesh = new THREE.Mesh(xGeo, new THREE.MeshBasicMaterial({ color: 0xff4444 }));
-      xMesh.rotation.z = -Math.PI / 2;
-      axesGroup.add(xMesh);
-      const yGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
-      const yMesh = new THREE.Mesh(yGeo, new THREE.MeshBasicMaterial({ color: 0x44ff44 }));
-      axesGroup.add(yMesh);
-      const zGeo = new THREE.CylinderGeometry(thick, thick, len * 2, 8);
-      const zMesh = new THREE.Mesh(zGeo, new THREE.MeshBasicMaterial({ color: 0x4444ff }));
-      zMesh.rotation.x = Math.PI / 2;
-      axesGroup.add(zMesh);
+
+      const axisLength = Math.max(xMax - xMin, yMax - yMin, zMax - zMin) + 1.5;
+      const axisThickness = 0.04;
+      const tickLength = 0.15;
+      const tickThickness = 0.02;
+      const fontSize = 0.3;
+
+      function createAxisLine(color, from, to) {
+        const dir = new THREE.Vector3().subVectors(to, from);
+        const length = dir.length();
+        const mid = new THREE.Vector3().addVectors(from, to).multiplyScalar(0.5);
+        const geo = new THREE.CylinderGeometry(axisThickness, axisThickness, length, 8);
+        const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color }));
+        mesh.position.copy(mid);
+        const axis = new THREE.Vector3(0, 1, 0);
+        const quat = new THREE.Quaternion().setFromUnitVectors(axis, dir.normalize());
+        mesh.setRotationFromQuaternion(quat);
+        axesGroup.add(mesh);
+      }
+
+      function createTick(from, to, color) {
+        const dir = new THREE.Vector3().subVectors(to, from);
+        const length = dir.length();
+        const mid = new THREE.Vector3().addVectors(from, to).multiplyScalar(0.5);
+        const geo = new THREE.CylinderGeometry(tickThickness, tickThickness, length, 6);
+        const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color }));
+        mesh.position.copy(mid);
+        const axis = new THREE.Vector3(0, 1, 0);
+        const quat = new THREE.Quaternion().setFromUnitVectors(axis, dir.normalize());
+        mesh.setRotationFromQuaternion(quat);
+        axesGroup.add(mesh);
+      }
+
+      function createLabel(text, position, color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'transparent';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = 'bold 38px "Segoe UI", Tahoma, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 64, 32);
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, depthTest: false, depthWrite: false });
+        const sprite = new THREE.Sprite(spriteMat);
+        sprite.position.copy(position);
+        sprite.scale.set(fontSize * 2, fontSize, 1);
+        axesGroup.add(sprite);
+      }
+
+      // --- محور X (قرمز) ---
+      const xFrom = new THREE.Vector3(xMin - 0.3, 0, 0);
+      const xTo = new THREE.Vector3(xMax + 0.3, 0, 0);
+      createAxisLine(0xff4444, xFrom, xTo);
+
+      // --- محور Y (سبز) ---
+      const yFrom = new THREE.Vector3(0, -Math.max(Math.abs(zMin), Math.abs(zMax)) - 0.3, 0);
+      const yTo = new THREE.Vector3(0, Math.max(Math.abs(zMin), Math.abs(zMax)) + 0.3, 0);
+      createAxisLine(0x44ff44, yFrom, yTo);
+
+      // --- محور Z (آبی) ---
+      const zFrom = new THREE.Vector3(0, 0, yMin - 0.3);
+      const zTo = new THREE.Vector3(0, 0, yMax + 0.3);
+      createAxisLine(0x4444ff, zFrom, zTo);
+
+      // --- تیک‌ها و اعداد محور X ---
+      const xStep = niceStep(xMax - xMin, 8);
+      let xTickStart = Math.ceil((xMin) / xStep) * xStep;
+      for (let x = xTickStart; x <= xMax; x += xStep) {
+        createTick(
+          new THREE.Vector3(x, -tickLength / 2, 0),
+          new THREE.Vector3(x, tickLength / 2, 0),
+          0xff4444
+        );
+        createLabel(x.toFixed(2), new THREE.Vector3(x, -0.4, 0), '#ff8888');
+      }
+
+      // --- تیک‌ها و اعداد محور Z (در Three.js به عنوان محور عمق) ---
+      const zStep = niceStep(yMax - yMin, 8);
+      let zTickStart = Math.ceil(yMin / zStep) * zStep;
+      for (let z = zTickStart; z <= yMax; z += zStep) {
+        createTick(
+          new THREE.Vector3(0, -tickLength / 2, z),
+          new THREE.Vector3(0, tickLength / 2, z),
+          0x4444ff
+        );
+        createLabel(z.toFixed(2), new THREE.Vector3(0, -0.4, z), '#8888ff');
+      }
+
+      // --- تیک‌ها و اعداد محور Y (مقادیر z ریاضی، محور عمودی) ---
+      const yStepVal = niceStep(zMax - zMin, 8);
+      let yTickStart = Math.ceil(zMin / yStepVal) * yStepVal;
+      for (let val = yTickStart; val <= zMax; val += yStepVal) {
+        createTick(
+          new THREE.Vector3(-tickLength / 2, val, 0),
+          new THREE.Vector3(tickLength / 2, val, 0),
+          0x44ff44
+        );
+        createLabel(val.toFixed(2), new THREE.Vector3(-0.4, val, 0), '#88ff88');
+      }
+
+      // --- برچسب‌های X، Y، Z در انتهای محورها ---
+      createLabel('X', new THREE.Vector3(xMax + 0.8, 0, 0), '#ff6666');
+      createLabel('Z', new THREE.Vector3(0, 0, yMax + 0.8), '#6666ff');
+      createLabel('Y', new THREE.Vector3(0, Math.max(Math.abs(zMin), Math.abs(zMax)) + 0.8, 0), '#66ff66');
+
       scene.add(axesGroup);
     }
 
+    // ========== Grid Helper ==========
     function createGrid(size) {
       const old = scene.getObjectByName('gridHelper');
       if (old) scene.remove(old);
@@ -202,6 +326,7 @@
       scene.add(gridHelper);
     }
 
+    // ========== Function Compiler ==========
     function compileFunction(funcStr) {
       try {
         const f = new Function('x', 'y', `return ${funcStr};`);
@@ -215,6 +340,7 @@
       }
     }
 
+    // ========== Surface Geometry ==========
     function createSurfaceGeometry(func, xMin, xMax, yMin, yMax, segments) {
       const xRange = xMax - xMin;
       const yRange = yMax - yMin;
@@ -276,16 +402,17 @@
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
       geometry.setIndex(indices);
       geometry.computeVertexNormals();
-      return geometry;
+
+      return { geometry, zMin, zMax };
     }
 
-    const SEGMENTS = 100;
-
+    // ========== Update Surface ==========
     function updateSurface(funcStr) {
       const xMin = parseFloat(xMinInput.value);
       const xMax = parseFloat(xMaxInput.value);
       const yMin = parseFloat(yMinInput.value);
       const yMax = parseFloat(yMaxInput.value);
+      const segments = parseInt(segmentsInput.value);
 
       if (isNaN(xMin) || isNaN(xMax) || isNaN(yMin) || isNaN(yMax)) {
         statusMessage.textContent = '❌ بازه‌ها باید عدد باشند.';
@@ -294,6 +421,16 @@
       }
       if (xMin >= xMax || yMin >= yMax) {
         statusMessage.textContent = '❌ بازه نامعتبر: xMin < xMax و yMin < yMax الزامی است.';
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+      if (isNaN(segments) || segments < 3) {
+        statusMessage.textContent = '❌ دقت باید حداقل ۳ باشد.';
+        statusMessage.className = 'status-message error';
+        return false;
+      }
+      if (segments > 500) {
+        statusMessage.textContent = '⚠️ دقت بیش از ۵۰۰ ممکن است مرورگر را کند کند.';
         statusMessage.className = 'status-message error';
         return false;
       }
@@ -310,14 +447,16 @@
         return false;
       }
 
-      let geometry;
+      let result;
       try {
-        geometry = createSurfaceGeometry(func, xMin, xMax, yMin, yMax, SEGMENTS);
+        result = createSurfaceGeometry(func, xMin, xMax, yMin, yMax, segments);
       } catch (e) {
         statusMessage.textContent = '❌ خطا در ساخت سطح: ' + e.message;
         statusMessage.className = 'status-message error';
         return false;
       }
+
+      const { geometry, zMin, zMax } = result;
 
       const material = new THREE.MeshStandardMaterial({
         vertexColors: true,
@@ -335,15 +474,16 @@
       wire.name = 'surfaceWireframe';
       scene.add(wire);
 
-      const maxSize = Math.max(xMax - xMin, yMax - yMin);
-      createAxes(maxSize);
+      const maxSize = Math.max(xMax - xMin, yMax - yMin, Math.abs(zMin), Math.abs(zMax));
+      createGraduatedAxes(xMin, xMax, yMin, yMax, zMin, zMax);
       createGrid(maxSize);
 
-      statusMessage.textContent = '✅ سطح فعلی: z = ' + funcStr + ' | بازه: [' + xMin + ', ' + xMax + '] × [' + yMin + ', ' + yMax + ']';
+      statusMessage.textContent = `✅ سطح: z = ${funcStr} | بازه: [${xMin}, ${xMax}] × [${yMin}, ${yMax}] | دقت: ${segments}×${segments}`;
       statusMessage.className = 'status-message';
       return true;
     }
 
+    // ========== Event Handlers ==========
     function handleDraw() {
       const funcStr = functionInput.value.trim();
       if (!funcStr) {
@@ -363,6 +503,7 @@
       xMaxInput.value = 4;
       yMinInput.value = -4;
       yMaxInput.value = 4;
+      segmentsInput.value = 80;
       updateSurface(functionInput.value);
     });
 
@@ -385,15 +526,19 @@
       renderer.setSize(w, h);
     });
 
+    // ========== Animation Loop ==========
     function animate() {
       requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
     }
 
+    // ========== Initial Render ==========
     updateSurface(functionInput.value);
     animate();
-    console.log('✅ رسم‌کنندهٔ سه‌بعدی با بازه قابل تنظیم آماده است.');
+
+    console.log('✅ رسم‌کنندهٔ سه‌بعدی با محورهای مدرج و دقت قابل تنظیم آماده است.');
+    console.log('🔬 برای تغییر دقت، عدد بخش‌ها را در فیلد مربوطه وارد کنید.');
   </script>
 </body>
 </html>

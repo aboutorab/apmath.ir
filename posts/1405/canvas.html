@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رسم نمودار دوبعدی با بازه قابل تنظیم</title>
+  <title>رسم نمودار دوبعدی با دقت قابل تنظیم</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -72,8 +72,9 @@
 </head>
 <body>
   <div id="info">
-    <h2>📐 رسم نمودار دوبعدی با بازه دلخواه</h2>
+    <h2>📐 رسم نمودار دوبعدی با دقت دلخواه</h2>
     <p>🖱️ با ماوس بکشید تا جابجا شوید | اسکرول کنید تا زوم کنید</p>
+    <p>🔬 دقت (تعداد نقاط) را برای جزئیات بیشتر یا کمتر تنظیم کنید</p>
   </div>
 
   <div class="canvas-wrapper">
@@ -103,8 +104,12 @@
       <label>yMax</label>
       <input type="number" id="yMaxInput" value="5" step="any">
     </div>
+    <div class="field-group">
+      <label>🔬 دقت (نقاط):</label>
+      <input type="number" id="precisionInput" value="1000" min="10" max="20000" step="10">
+    </div>
     <button id="drawButton">🔄 رسم</button>
-    <button id="resetButton" style="background:#475; hover:background:#5a5;">↺ پیش‌فرض</button>
+    <button id="resetButton" style="background:#475;">↺ پیش‌فرض</button>
   </div>
 
   <div class="examples-row">
@@ -131,6 +136,7 @@
       const xMaxInput = document.getElementById('xMaxInput');
       const yMinInput = document.getElementById('yMinInput');
       const yMaxInput = document.getElementById('yMaxInput');
+      const precisionInput = document.getElementById('precisionInput');
       const drawButton = document.getElementById('drawButton');
       const resetButton = document.getElementById('resetButton');
       const valueDisplay = document.getElementById('valueDisplay');
@@ -152,6 +158,19 @@
           return false;
         }
         return true;
+      }
+
+      function readPrecision() {
+        const precision = parseInt(precisionInput.value);
+        if (isNaN(precision) || precision < 2) {
+          alert('دقت باید حداقل ۲ نقطه باشد.');
+          return null;
+        }
+        if (precision > 100000) {
+          alert('دقت بیش از ۱۰۰٬۰۰۰ نقطه ممکن است مرورگر را کند کند.');
+          return null;
+        }
+        return precision;
       }
 
       function updateInputsFromBounds() {
@@ -251,6 +270,9 @@
         const funcStr = functionInput.value.trim();
         if (!funcStr) return;
 
+        const precision = readPrecision();
+        if (precision === null) return;
+
         ctx.beginPath();
         ctx.strokeStyle = '#ff6b6b';
         ctx.lineWidth = 2.5;
@@ -261,21 +283,27 @@
 
         let firstPoint = true;
         let prevY = null;
-        const step = (xMax - xMin) / canvas.width;
+        const step = (xMax - xMin) / precision;
 
-        for (let px = 0; px <= canvas.width; px++) {
-          const x = toMathX(px);
+        for (let i = 0; i <= precision; i++) {
+          const x = xMin + i * step;
+          const px = toCanvasX(x);
           const y = evaluateFunction(funcStr, x);
+
           if (isNaN(y)) { firstPoint = true; prevY = null; continue; }
+
           const cy = toCanvasY(y);
           if (prevY !== null && Math.abs(y - prevY) > (yMax - yMin) * 0.8) {
             firstPoint = true;
           }
+
           const clampedCy = Math.max(-1000, Math.min(2000, cy));
           if (firstPoint) { ctx.moveTo(px, clampedCy); firstPoint = false; }
           else { ctx.lineTo(px, clampedCy); }
+
           prevY = y;
         }
+
         ctx.stroke();
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
@@ -356,20 +384,17 @@
         const mathX = toMathX(mouseCanvasX);
         const mathY = toMathY(mouseCanvasY);
         const zoomFactor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
-        xMin = mathX - (mathX - xMin) * zoomFactor;
-        xMax = mathX + (xMax - mathX) * zoomFactor;
-        yMin = mathY - (mathY - yMin) * zoomFactor;
-        yMax = mathY + (yMax - mathY) * zoomFactor;
-        const newXRange = xMax - xMin;
-        const newYRange = yMax - yMin;
+        const newXMin = mathX - (mathX - xMin) * zoomFactor;
+        const newXMax = mathX + (xMax - mathX) * zoomFactor;
+        const newYMin = mathY - (mathY - yMin) * zoomFactor;
+        const newYMax = mathY + (yMax - mathY) * zoomFactor;
+        const newXRange = newXMax - newXMin;
+        const newYRange = newYMax - newYMin;
         if (newXRange < 0.01 || newXRange > 1000 || newYRange < 0.01 || newYRange > 1000) {
-          // revert
-          xMin = mathX - (mathX - xMin) / zoomFactor;
-          xMax = mathX + (xMax - mathX) / zoomFactor;
-          yMin = mathY - (mathY - yMin) / zoomFactor;
-          yMax = mathY + (yMax - mathY) / zoomFactor;
           return;
         }
+        xMin = newXMin; xMax = newXMax;
+        yMin = newYMin; yMax = newYMax;
         updateInputsFromBounds();
         render();
       });
@@ -379,6 +404,7 @@
       });
       resetButton.addEventListener('click', () => {
         xMin = -8; xMax = 8; yMin = -5; yMax = 5;
+        precisionInput.value = 1000;
         updateInputsFromBounds();
         render();
       });
@@ -398,7 +424,8 @@
       });
 
       render();
-      console.log('✅ رسم‌کنندهٔ دوبعدی با بازه قابل تنظیم آماده است.');
+      console.log('✅ رسم‌کنندهٔ دوبعدی با دقت قابل تنظیم آماده است.');
+      console.log('🔬 برای تغییر دقت، تعداد نقاط را در فیلد مربوطه تغییر دهید.');
     })();
   </script>
 </body>
