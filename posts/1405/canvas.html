@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>رسم نمودار دوبعدی با دقت قابل تنظیم</title>
+  <title>رسم نمودار دوبعدی با زوم هوشمند و دکمه‌های +/-</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -22,6 +22,7 @@
     #info h2 { margin: 0 0 8px 0; font-size: 26px; color: #ff6b6b; }
     #info p { margin: 4px 0; color: #b0b0b0; font-size: 13px; }
     .canvas-wrapper {
+      position: relative;
       background: rgba(255, 255, 255, 0.03);
       border: 2px solid rgba(255, 107, 107, 0.4);
       border-radius: 16px;
@@ -30,6 +31,39 @@
     }
     canvas { display: block; border-radius: 10px; cursor: grab; }
     canvas:active { cursor: grabbing; }
+    .zoom-buttons {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+    }
+    .zoom-buttons button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 107, 107, 0.7);
+      background: rgba(0, 0, 0, 0.7);
+      color: #ff6b6b;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+      backdrop-filter: blur(5px);
+    }
+    .zoom-buttons button:hover {
+      background: rgba(255, 107, 107, 0.4);
+      color: white;
+      border-color: #ff6b6b;
+      transform: scale(1.1);
+      box-shadow: 0 0 18px rgba(255, 107, 107, 0.5);
+    }
+    .zoom-buttons button:active { transform: scale(0.95); }
     .controls-panel {
       display: flex; flex-wrap: wrap; gap: 12px;
       margin-top: 20px; align-items: center; justify-content: center;
@@ -50,15 +84,28 @@
     .field-group input[type="text"] { width: 220px; direction: ltr; text-align: left; }
     .field-group input:focus { outline: none; border-color: #ff6b6b; box-shadow: 0 0 12px rgba(255, 107, 107, 0.4); }
     .field-group input[type="number"] { direction: ltr; }
-    button {
+    .controls-panel button {
       background: #ff6b6b; color: white; border: none;
       padding: 8px 22px; border-radius: 25px; font-size: 14px;
       cursor: pointer; transition: all 0.3s; font-weight: bold;
     }
-    button:hover { background: #ff8787; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); }
+    .controls-panel button:hover { background: #ff8787; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4); }
     .value-display {
       text-align: center; margin-top: 10px; font-size: 15px;
       color: #ffd93d; min-height: 22px;
+    }
+    .precision-indicator {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ffd93d;
+      padding: 6px 14px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 217, 61, 0.4);
     }
     .examples-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; justify-content: center; }
     .example-chip {
@@ -72,13 +119,18 @@
 </head>
 <body>
   <div id="info">
-    <h2>📐 رسم نمودار دوبعدی با دقت دلخواه</h2>
-    <p>🖱️ با ماوس بکشید تا جابجا شوید | اسکرول کنید تا زوم کنید</p>
-    <p>🔬 دقت (تعداد نقاط) را برای جزئیات بیشتر یا کمتر تنظیم کنید</p>
+    <h2>📐 رسم نمودار دوبعدی با زوم هوشمند</h2>
+    <p>🖱️ با ماوس بکشید تا جابجا شوید | اسکرول کنید تا زوم کنید | دقت خودکار افزایش می‌یابد</p>
+    <p>➕➖ از دکمه‌های گوشهٔ بالا-راست نیز می‌توانید استفاده کنید</p>
   </div>
 
   <div class="canvas-wrapper">
     <canvas id="graphCanvas" width="800" height="550"></canvas>
+    <div class="zoom-buttons">
+      <button id="zoomInBtn" title="زوم مثبت">+</button>
+      <button id="zoomOutBtn" title="زوم منفی">−</button>
+    </div>
+    <div class="precision-indicator" id="precisionIndicator">🔬 دقت: ۱۰۰۰</div>
   </div>
 
   <div class="value-display" id="valueDisplay">مختصات: —</div>
@@ -106,7 +158,7 @@
     </div>
     <div class="field-group">
       <label>🔬 دقت (نقاط):</label>
-      <input type="number" id="precisionInput" value="1000" min="10" max="20000" step="10">
+      <input type="number" id="precisionInput" value="1000" min="10" max="50000" step="10">
     </div>
     <button id="drawButton">🔄 رسم</button>
     <button id="resetButton" style="background:#475;">↺ پیش‌فرض</button>
@@ -140,13 +192,18 @@
       const drawButton = document.getElementById('drawButton');
       const resetButton = document.getElementById('resetButton');
       const valueDisplay = document.getElementById('valueDisplay');
+      const precisionIndicator = document.getElementById('precisionIndicator');
+      const zoomInBtn = document.getElementById('zoomInBtn');
+      const zoomOutBtn = document.getElementById('zoomOutBtn');
       const exampleChips = document.querySelectorAll('.example-chip');
 
       let xMin = -8, xMax = 8, yMin = -5, yMax = 5;
+      let currentPrecision = 1000;
       let isDragging = false, dragStartX = 0, dragStartY = 0;
       let dragStartXMin = 0, dragStartXMax = 0, dragStartYMin = 0, dragStartYMax = 0;
       let mouseX = null, mouseY = null;
 
+      // ---------- اعتبارسنجی ----------
       function readBoundsFromInputs() {
         xMin = parseFloat(xMinInput.value);
         xMax = parseFloat(xMaxInput.value);
@@ -180,11 +237,18 @@
         yMaxInput.value = yMax;
       }
 
+      function updatePrecisionDisplay() {
+        precisionInput.value = currentPrecision;
+        precisionIndicator.textContent = '🔬 دقت: ' + currentPrecision.toLocaleString('fa-IR');
+      }
+
+      // ---------- تبدیل مختصات ----------
       function toCanvasX(mathX) { return ((mathX - xMin) / (xMax - xMin)) * canvas.width; }
       function toCanvasY(mathY) { return canvas.height - ((mathY - yMin) / (yMax - yMin)) * canvas.height; }
       function toMathX(canvasX) { return xMin + (canvasX / canvas.width) * (xMax - xMin); }
       function toMathY(canvasY) { return yMin + ((canvas.height - canvasY) / canvas.height) * (yMax - yMin); }
 
+      // ---------- گام مناسب برای شبکه ----------
       function niceStep(range) {
         const roughStep = range / 10;
         const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
@@ -197,6 +261,7 @@
         return niceResidual * magnitude;
       }
 
+      // ---------- رسم شبکه ----------
       function drawGrid() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#0a0a1a';
@@ -257,6 +322,7 @@
         }
       }
 
+      // ---------- ارزیابی تابع ----------
       function evaluateFunction(funcStr, x) {
         try {
           const f = new Function('x', `return ${funcStr};`);
@@ -266,12 +332,12 @@
         } catch (e) { return NaN; }
       }
 
+      // ---------- رسم تابع ----------
       function drawFunction() {
         const funcStr = functionInput.value.trim();
         if (!funcStr) return;
 
-        const precision = readPrecision();
-        if (precision === null) return;
+        const precision = currentPrecision;
 
         ctx.beginPath();
         ctx.strokeStyle = '#ff6b6b';
@@ -309,6 +375,7 @@
         ctx.shadowBlur = 0;
       }
 
+      // ---------- خطوط تقاطع ----------
       function drawCrosshair() {
         if (mouseX === null || mouseY === null) return;
         if (mouseX < 0 || mouseX > canvas.width || mouseY < 0 || mouseY > canvas.height) return;
@@ -338,12 +405,45 @@
         valueDisplay.innerHTML = `📍 x = ${mathX.toFixed(4)} | y = ${mathY.toFixed(4)} | f(x) = ${funcValue}`;
       }
 
+      // ---------- رندر ----------
       function render() {
         drawGrid();
         drawFunction();
         drawCrosshair();
+        updatePrecisionDisplay();
       }
 
+      // ---------- زوم ----------
+      function zoomAt(zoomFactor, centerCanvasX, centerCanvasY) {
+        const mathX = toMathX(centerCanvasX);
+        const mathY = toMathY(centerCanvasY);
+        const newXMin = mathX - (mathX - xMin) * zoomFactor;
+        const newXMax = mathX + (xMax - mathX) * zoomFactor;
+        const newYMin = mathY - (mathY - yMin) * zoomFactor;
+        const newYMax = mathY + (yMax - mathY) * zoomFactor;
+        const newXRange = newXMax - newXMin;
+        const newYRange = newYMax - newYMin;
+        if (newXRange < 0.001 || newXRange > 1000 || newYRange < 0.001 || newYRange > 1000) {
+          return false;
+        }
+        xMin = newXMin; xMax = newXMax;
+        yMin = newYMin; yMax = newYMax;
+
+        // افزایش خودکار دقت هنگام زوم مثبت
+        if (zoomFactor < 1) {
+          // زوم مثبت
+          currentPrecision = Math.min(100000, Math.floor(currentPrecision * 1.3));
+        } else {
+          // زوم منفی
+          currentPrecision = Math.max(10, Math.floor(currentPrecision / 1.3));
+        }
+        precisionInput.value = currentPrecision;
+        updateInputsFromBounds();
+        render();
+        return true;
+      }
+
+      // ---------- رویدادهای ماوس ----------
       canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
         dragStartX = e.offsetX;
@@ -381,37 +481,44 @@
         const rect = canvas.getBoundingClientRect();
         const mouseCanvasX = e.clientX - rect.left;
         const mouseCanvasY = e.clientY - rect.top;
-        const mathX = toMathX(mouseCanvasX);
-        const mathY = toMathY(mouseCanvasY);
         const zoomFactor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
-        const newXMin = mathX - (mathX - xMin) * zoomFactor;
-        const newXMax = mathX + (xMax - mathX) * zoomFactor;
-        const newYMin = mathY - (mathY - yMin) * zoomFactor;
-        const newYMax = mathY + (yMax - mathY) * zoomFactor;
-        const newXRange = newXMax - newXMin;
-        const newYRange = newYMax - newYMin;
-        if (newXRange < 0.01 || newXRange > 1000 || newYRange < 0.01 || newYRange > 1000) {
-          return;
-        }
-        xMin = newXMin; xMax = newXMax;
-        yMin = newYMin; yMax = newYMax;
-        updateInputsFromBounds();
-        render();
+        zoomAt(zoomFactor, mouseCanvasX, mouseCanvasY);
       });
 
+      // ---------- دکمه‌های زوم ----------
+      zoomInBtn.addEventListener('click', () => {
+        zoomAt(1 / 1.15, canvas.width / 2, canvas.height / 2);
+      });
+      zoomOutBtn.addEventListener('click', () => {
+        zoomAt(1.15, canvas.width / 2, canvas.height / 2);
+      });
+
+      // ---------- دکمه‌های کنترل ----------
       drawButton.addEventListener('click', () => {
-        if (readBoundsFromInputs()) render();
+        const p = readPrecision();
+        if (p !== null) {
+          currentPrecision = p;
+          if (readBoundsFromInputs()) render();
+        }
       });
       resetButton.addEventListener('click', () => {
         xMin = -8; xMax = 8; yMin = -5; yMax = 5;
-        precisionInput.value = 1000;
+        currentPrecision = 1000;
+        precisionInput.value = currentPrecision;
         updateInputsFromBounds();
         render();
       });
       functionInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { if (readBoundsFromInputs()) render(); }
+        if (e.key === 'Enter') {
+          const p = readPrecision();
+          if (p !== null) {
+            currentPrecision = p;
+            if (readBoundsFromInputs()) render();
+          }
+        }
       });
 
+      // ---------- مثال‌ها ----------
       exampleChips.forEach(chip => {
         chip.addEventListener('click', () => {
           functionInput.value = chip.getAttribute('data-func');
@@ -419,13 +526,18 @@
           xMaxInput.value = chip.getAttribute('data-xmax');
           yMinInput.value = chip.getAttribute('data-ymin');
           yMaxInput.value = chip.getAttribute('data-ymax');
+          currentPrecision = 1000;
+          precisionInput.value = currentPrecision;
           if (readBoundsFromInputs()) render();
         });
       });
 
+      // ---------- راه‌اندازی ----------
+      precisionInput.value = currentPrecision;
       render();
-      console.log('✅ رسم‌کنندهٔ دوبعدی با دقت قابل تنظیم آماده است.');
-      console.log('🔬 برای تغییر دقت، تعداد نقاط را در فیلد مربوطه تغییر دهید.');
+      console.log('✅ رسم‌کنندهٔ دوبعدی با زوم هوشمند آماده است.');
+      console.log('🔬 هنگام زوم با اسکرول، دقت به طور خودکار تغییر می‌کند.');
+      console.log('➕➖ دکمه‌های زوم در گوشهٔ بالا-راست فعال هستند.');
     })();
   </script>
 </body>

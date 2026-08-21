@@ -13,7 +13,7 @@
         "children": [
           {
             "title": "قضیه فیثاغورث",
-            "link": "index.html?post=pythagorean-theorem"
+            "link": "index.html?post=pythagorean-theorem&jsn=1405"
           }
         ]
       },
@@ -23,7 +23,7 @@
         "children": [
           {
             "title": "تایپ فرمول‌های ریاضی",
-            "link": "index.html?post=math-formula"
+            "link": "index.html?post=math-formula&jsn=1405"
           }
         ]
       },
@@ -33,15 +33,15 @@
         "children": [
           {
             "title": "رسم نمودار",
-            "link": "?post=plot"
+            "link": "?post=plot&jsn=1405"
           },
           {
             "title": "ماشین حساب",
-            "link": "?post=calculator"
+            "link": "?post=calculator&jsn=1405"
           },
           {
             "title": "بازی زیک",
-            "link": "?post=zeek-game"
+            "link": "?post=zeek-game&jsn=1405"
           }
         ]
       }
@@ -53,11 +53,11 @@
     "children": [
       {
         "title": "درباره من",
-        "link": "?page_slug=about"
+        "link": "?page_slug=about&jsn=pages"
       },
       {
         "title": "تماس با من",
-        "link": "?page_slug=contact"
+        "link": "?page_slug=contact&jsn=pages"
       }
     ]
   }

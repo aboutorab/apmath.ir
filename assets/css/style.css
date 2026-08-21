@@ -2,7 +2,7 @@
 @font-face{font-family:'Vazirmatn';src:url('../fonts/vazirmatn/Vazirmatn-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
 :root{--p:#0d9488;--pd:#0f766e;--pl:#14b8a6;--pbg:#f0fdfa;--pbg2:#ccfbf1;--t:#333;--tl:#666;--bg:#fff;--bg2:#f5f5f5;--bdr:#e0e0e0;--sh:0 2px 8px rgba(0,0,0,0.1);--r:8px;--tr:all 0.3s ease;--sw:225px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--t);background:var(--bg2);line-height:1.8;direction:rtl}
+body{font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--t);background:var(--bg2);line-height:1.8;direction:rtl;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 body.sidebar-open{overflow:hidden}
 body.reader-mode .site-header,body.reader-mode .sidebar,body.reader-mode .sidebar-overlay,body.reader-mode .pagination,body.reader-mode .site-footer,body.reader-mode .post-toolbar,body.reader-mode .back-to-home,body.reader-mode .post-meta,body.reader-mode .tags,body.reader-mode .hamburger,body.reader-mode .top-menu,body.reader-mode .mobile-main-menu,body.reader-mode .mobile-menu-toggle{display:none!important}
 body.reader-mode .main-container{display:block!important;margin:0!important;padding:0!important;max-width:100%!important}
@@ -181,6 +181,20 @@ body.reader-mode .container{max-width:100%!important;padding:0!important}
 body.reader-mode .reader-mode-exit{display:flex}
 .reader-mode-exit:hover{background:rgba(0,0,0,0.8);transform:scale(1.1)}
 .reading-time{display:inline-flex;align-items:center;gap:4px;color:var(--tl);font-size:.8rem;background:var(--bg2);padding:2px 10px;border-radius:15px;white-space:nowrap}
+body,button,input,select,textarea,.post-content,.post-excerpt,.post-card,.full-post,.site-title,.site-subtitle,.horizontal-menu a,.mobile-main-menu a,.top-menu a,.sidebar-widget,.pagination-btn,.page-number,.tag,.reading-time,.search-result-item,.loading-text,.post-title-link,.fixed-badge{font-feature-settings:"ss01" 1;-webkit-font-feature-settings:"ss01" 1;-moz-font-feature-settings:"ss01" 1}
+code,pre,.code-content-custom,[dir="ltr"],[lang="en"],.ltr,.english,.post-content code,.post-content pre{font-feature-settings:normal;-webkit-font-feature-settings:normal;-moz-font-feature-settings:normal;font-family:'Vazirmatn',Tahoma,monospace;direction:ltr;text-align:left}
+.post-content p,.post-excerpt p{font-feature-settings:"ss01" 1;-webkit-font-feature-settings:"ss01" 1;-moz-font-feature-settings:"ss01" 1}
+.top-menu ul li a .top-menu-icon{max-height:20px;width:auto;height:auto;max-width:24px;object-fit:contain;vertical-align:middle;margin-left:5px;display:inline-block;border-radius:2px;transition:var(--tr)}
+.top-menu ul li a:hover .top-menu-icon{transform:scale(1.15)}
+.top-menu ul li a.icon-only{padding:2px 8px}
+.top-menu ul li a.icon-only .top-menu-icon{margin-left:0;max-height:18px;max-width:22px}
+.toolbar-scripts-widget{padding:8px}
+.toolbar-scripts-widget #toolbarScriptsList{display:flex;flex-direction:column;gap:10px}
+.toolbar-scripts-widget .toolbar-script-item{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--r);padding:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow:hidden;transition:var(--tr)}
+.toolbar-scripts-widget .toolbar-script-item:hover{box-shadow:0 2px 8px rgba(0,0,0,0.1);border-color:var(--pl)}
+.toolbar-scripts-widget .toolbar-script-item img{max-width:100%;height:auto;display:block}
+.toolbar-scripts-widget .toolbar-script-item a{text-decoration:none}
+.toolbar-scripts-widget .toolbar-script-item iframe{display:block;width:100%;border:none;background:transparent}
 body.dark-mode{--t:#e0e0e0;--tl:#aaa;--bg:#1a1a2e;--bg2:#16213e;--bdr:#2a2a4a;--pbg:#1a3a3a;--pbg2:#0d2a2a;--sh:0 2px 8px rgba(0,0,0,0.4);background:#0f0f1a;color:#e0e0e0}
 body.dark-mode .top-menu{background:#111827;border-bottom-color:#1f2937}
 body.dark-mode .top-menu ul li a{color:#9ca3af}
@@ -245,6 +259,8 @@ body.dark-mode .hamburger span{background:#ccc}
 body.dark-mode .hamburger:hover{background-color:rgba(255,255,255,0.05)}
 body.dark-mode .sidebar-close{color:#ccc}
 body.dark-mode .sidebar-close:hover{color:#5eead4}
+body.dark-mode .toolbar-scripts-widget .toolbar-script-item{background:#1a1a2e;border-color:#2a2a4a;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+body.dark-mode .toolbar-scripts-widget .toolbar-script-item:hover{border-color:var(--pl)}
 body.dark-mode .code-wrapper-custom{background:#0d1117;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
 body.dark-mode .code-header-custom{background:#161b22;border-bottom-color:#30363d}
 body.dark-mode .code-body-custom{background:#0d1117}

@@ -4,6 +4,40 @@ blog/
 │   ├── css/
 │   │   └── style.css       ← استایل‌های سایت
 │   ├── js/
+│   │   ├── date-converter.js
+│   │   ├── blog-engine.js
+│   │   ├── search-engine.js
+│   │   ├── pagination.js
+│   │   ├── menu-builder.js
+│   │   ├── router.js
+│   │   └── main.js
+│   ├── images/             ← تصاویر عمومی
+│   │   └── back.jpg
+│   └── fonts/
+│       └── vazirmatn/
+├── data/                   ← فایل‌های اطلاعات (اینجا ویرایش کنید)
+│   ├── postfiles.json      ← لیست فایل‌های JSON پست‌ها
+│   ├── 1405.json           ← اطلاعات پست‌ها
+│   ├── pages.json          ← اطلاعات صفحات ثابت
+│   ├── links.json          ← لینک‌های مفید سایدبار
+│   ├── script.json         ← اسکریپت‌های خارجی کل سایت
+│   ├── favorite.json       ← یادداشت‌های منتخب ⭐
+│   ├── menu.json           ← منوی اصلی (با زیرمنو)
+│   ├── topmenu.json        ← منوی بالایی (با تصویر)
+│   └── toolbar.script      ← اسکریپت‌های سایدبار
+├── posts/
+│   └── 1405/              ← زیرپوشه پست‌ها
+│       ├── calculator.html
+│       ├── plot.html
+│       └── ...
+└── pages/
+    ├── about.html
+    └── contact.htmlblog/
+├── index.html              ← صفحه اصلی (تغییر ندهید)
+├── assets/
+│   ├── css/
+│   │   └── style.css       ← استایل‌های سایت
+│   ├── js/
 │   │   ├── date-converter.js   ← تبدیل تاریخ شمسی
 │   │   ├── blog-engine.js      ← موتور اصلی وبلاگ
 │   │   ├── search-engine.js    ← موتور جستجو
