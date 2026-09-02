@@ -2,7 +2,12 @@ blog/
 ├── index.html              ← صفحه اصلی (تغییر ندهید)
 ├── assets/
 │   ├── css/
-│   │   └── style.css       ← استایل‌های سایت
+│   │   ├── main.css        ← استایل‌های اصلی
+│   │   ├── menus.css       ← استایل‌های منوها
+│   │   ├── components.css  ← استایل‌های کامپوننت‌ها
+│   │   ├── utilities.css   ← اعداد فارسی، آیکون‌ها
+│   │   ├── dark-mode.css   ← حالت تاریک
+│   │   └── responsive.css  ← ریسپانسیو
 │   ├── js/
 │   │   ├── date-converter.js
 │   │   ├── blog-engine.js
@@ -11,58 +16,25 @@ blog/
 │   │   ├── menu-builder.js
 │   │   ├── router.js
 │   │   └── main.js
-│   ├── images/             ← تصاویر عمومی
+│   ├── images/
 │   │   └── back.jpg
 │   └── fonts/
 │       └── vazirmatn/
-├── data/                   ← فایل‌های اطلاعات (اینجا ویرایش کنید)
+├── data/
 │   ├── postfiles.json      ← لیست فایل‌های JSON پست‌ها
 │   ├── 1405.json           ← اطلاعات پست‌ها
-│   ├── pages.json          ← اطلاعات صفحات ثابت
-│   ├── links.json          ← لینک‌های مفید سایدبار
-│   ├── script.json         ← اسکریپت‌های خارجی کل سایت
-│   ├── favorite.json       ← یادداشت‌های منتخب ⭐
-│   ├── menu.json           ← منوی اصلی (با زیرمنو)
-│   ├── topmenu.json        ← منوی بالایی (با تصویر)
+│   ├── pages.json          ← صفحات ثابت
+│   ├── links.json          ← لینک‌های مفید
+│   ├── scripts.script      ← اسکریپت‌های خارجی کل سایت
+│   ├── favorite.json       ← یادداشت‌های منتخب
+│   ├── menu.json           ← منوی اصلی
+│   ├── topmenu.json        ← منوی بالایی
 │   └── toolbar.script      ← اسکریپت‌های سایدبار
 ├── posts/
-│   └── 1405/              ← زیرپوشه پست‌ها
+│   └── 1405/
 │       ├── calculator.html
 │       ├── plot.html
 │       └── ...
 └── pages/
-    ├── about.html
-    └── contact.htmlblog/
-├── index.html              ← صفحه اصلی (تغییر ندهید)
-├── assets/
-│   ├── css/
-│   │   └── style.css       ← استایل‌های سایت
-│   ├── js/
-│   │   ├── date-converter.js   ← تبدیل تاریخ شمسی
-│   │   ├── blog-engine.js      ← موتور اصلی وبلاگ
-│   │   ├── search-engine.js    ← موتور جستجو
-│   │   ├── pagination.js       ← صفحه‌بندی
-│   │   ├── menu-builder.js     ← ساخت منوها
-│   │   ├── router.js           ← مسیریابی
-│   │   └── main.js             ← راه‌اندازی اولیه
-│   ├── images/             ← تصاویر عمومی
-│   │   └── back.jpg        ← تصویر پس‌زمینه هدر
-│   └── fonts/
-│       └── vazirmatn/      ← فونت فارسی وزیرمتن
-├── data/                   ← فایل‌های اطلاعات (اینجا ویرایش کنید)
-│   ├── postfiles.json      ← لیست فایل‌های JSON پست‌ها
-│   ├── 1405.json           ← اطلاعات پست‌ها
-│   ├── pages.json          ← اطلاعات صفحات ثابت
-│   ├── links.json          ← لینک‌های مفید
-│   ├── script.json         ← اسکریپت‌های خارجی کل وبلاگ
-│   ├── favorite.json       ← یادداشت‌های منتخب ⭐
-│   ├── menu.json           ← منوی اصلی (با زیرمنو)
-│   └── topmenu.json        ← منوی بالایی
-├── posts/                  ← فایل‌های HTML پست‌ها
-│   └── 1405/              ← زیرپوشه پست‌ها
-│       ├── calculator.html
-│       ├── plot.html
-│       └── ...
-└── pages/                  ← فایل‌های HTML صفحات ثابت
     ├── about.html
     └── contact.html

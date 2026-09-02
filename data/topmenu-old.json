@@ -1,0 +1,52 @@
+[
+  {
+    "title": "ابزارهای ریاضی",
+    "link": "#",
+    "children": [
+      {
+        "title": "رسم نمودار",
+        "link": "#",
+        "children": [
+          {
+            "title": "Desmos",
+            "link": "https://www.desmos.com/calculator",
+            "target": "_blank",
+            "image": "desmos.png",
+            "alt": "ماشین حساب گرافیکی Desmos"
+          },
+          {
+            "title": "GeoGebra",
+            "link": "https://www.geogebra.org/",
+            "target": "_blank",
+            "image": "geogebra.png",
+            "alt": "نرم‌افزار هندسه"
+          }
+        ]
+      },
+      {
+        "title": "MathJax",
+        "link": "https://www.mathjax.org/",
+        "target": "_blank",
+        "image": "mathjax.png",
+        "alt": "موتور نمایش فرمول"
+      },
+      {
+        "title": "ویرایشگر HTML",
+        "link": "https://wysiwyghtml.com/",
+        "target": "_blank",
+        "image": "editor.ico",
+        "alt": "ویرایشگر HTML"
+      }
+    ]
+  },
+  {
+    "image": "icon.ico",
+    "link": "https://example.com",
+    "target": "_blank",
+    "alt": "فقط آیکون"
+  },
+  {
+    "title": "ساده",
+    "link": "https://example.com"
+  }
+]

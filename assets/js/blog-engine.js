@@ -1,10 +1,11 @@
 class BlogEngine {
-    static pfc=null; static bpc={}; static apc=null; static pcc={}; static pcct=0; static esl=false; static esc=null; static tpc=null;
+    static pfc=null;static bpc={};static apc=null;static pcc={};static pcct=0;static esl=false;static tpc=null;static scC=null;
     static gcb(){const t=10*60*1000;return Math.floor(Date.now()/t)}
-    static acb(u){const s=u.includes('?')?'&':'?';return `${u}${s}_cb=${this.gcb()}`}
-    static async loadPostFilesConfig(){if(this.pfc)return this.pfc;try{const u=this.acb('data/postfiles.json');const r=await fetch(u);if(!r.ok)throw new Error('');this.pfc=await r.json();return this.pfc}catch(e){return[]}}
-    static getSubdirFromFilename(j){if(!j)return'';const c=this.pfc||[];const b=c.find(x=>x.filename.replace(/\.json$/i,'')===j);return b?.subdir||''}
-    static getFilenameFromSubdir(s){if(!s)return'';const c=this.pfc||[];const b=c.find(x=>x.subdir===s);return b?.filename?.replace(/\.json$/i,'')||''}
+    static acb(u){const s=u.includes('?')?'&':'?';return`${u}${s}_cb=${this.gcb()}`}
+    static async getScriptsContent(){if(this.scC!==null)return this.scC;try{const r=await fetch(this.acb('data/scripts.script'));if(!r.ok){this.scC='';return''}this.scC=await r.text();return this.scC}catch(e){this.scC='';return''}}
+    static async loadPostFilesConfig(){if(this.pfc)return this.pfc;try{const r=await fetch(this.acb('data/postfiles.json'));if(!r.ok)throw new Error('');this.pfc=await r.json();return this.pfc}catch(e){return[]}}
+    static getSubdirFromFilename(j){if(!j)return'';const b=(this.pfc||[]).find(x=>x.filename.replace(/\.json$/i,'')===j);return b?.subdir||''}
+    static getFilenameFromSubdir(s){if(!s)return'';const b=(this.pfc||[]).find(x=>x.subdir===s);return b?.filename?.replace(/\.json$/i,'')||''}
     static async loadPostContentFromJSON(slug,jfn){
         try{
             const cfg=await this.loadPostFilesConfig();
@@ -24,11 +25,15 @@ class BlogEngine {
     }
     static async loadExternalScripts(){
         if(this.esl)return;this.esl=true;
-        try{const r=await fetch(this.acb('data/script.json'));if(!r.ok)return;const sc=await r.json();if(!sc?.length)return;this.esc=sc;for(const cfg of sc){await this.loadSingleExternalScript(cfg)}}catch(e){}
+        const text=await this.getScriptsContent();
+        if(!text)return;
+        const scripts=text.split(/\n\s*\n+/).map(s=>s.trim()).filter(s=>s.length>0);
+        for(const scriptHTML of scripts){await this.loadSingleExternalScript(scriptHTML)}
     }
-    static async loadSingleExternalScript(cfg){
-        const html=cfg.script.trim();const parser=new DOMParser();const doc=parser.parseFromString(html,'text/html');
-        const els=[...doc.head.children,...doc.body.children];for(const el of els){await this.injectElementWithCacheBuster(el)}
+    static async loadSingleExternalScript(scriptHTML){
+        const parser=new DOMParser();
+        const doc=parser.parseFromString(scriptHTML.trim(),'text/html');
+        for(const el of[...doc.head.children,...doc.body.children]){await this.injectElementWithCacheBuster(el)}
     }
     static injectElementWithCacheBuster(el){
         return new Promise(res=>{
@@ -54,10 +59,15 @@ class BlogEngine {
         })
     }
     static async rerenderExternalScripts(){
-        if(!this.esc)return;await new Promise(r=>setTimeout(r,200));
-        for(const cfg of this.esc){
-            const parser=new DOMParser();const doc=parser.parseFromString(cfg.script.trim(),'text/html');
-            for(const el of [...doc.head.children,...doc.body.children]){
+        if(!this.esl)return;
+        const text=await this.getScriptsContent();
+        if(!text)return;
+        const scripts=text.split(/\n\s*\n+/).map(s=>s.trim()).filter(s=>s.length>0);
+        await new Promise(r=>setTimeout(r,200));
+        for(const scriptHTML of scripts){
+            const parser=new DOMParser();
+            const doc=parser.parseFromString(scriptHTML,'text/html');
+            for(const el of[...doc.head.children,...doc.body.children]){
                 if(el.tagName.toLowerCase()==='script'&&!el.src&&el.textContent){try{new Function(el.textContent)()}catch(e){}}
             }
         }
@@ -91,12 +101,11 @@ class BlogEngine {
     static async loadPostsFromBatch(idx){
         if(this.bpc[idx])return this.bpc[idx];
         const cfg=await this.loadPostFilesConfig();if(!cfg||idx>=cfg.length)return[];
-        const bc=cfg[idx];
         try{
-            const r=await fetch(this.acb(`data/${bc.filename}`));if(!r.ok)throw new Error('');
+            const r=await fetch(this.acb(`data/${cfg[idx].filename}`));if(!r.ok)throw new Error('');
             const posts=await r.json();
             const pw=posts.map(p=>this.applyDefaults(p)).filter(p=>p.published==='yes');
-            const res=pw.map(p=>({...p,slug:this.getEffectiveSlug(p),_batchSubdir:bc.subdir||'',_postSubdir:p.subdir||null,_hasPreviewFile:this.hasPreviewFile(p)}));
+            const res=pw.map(p=>({...p,slug:this.getEffectiveSlug(p),_batchSubdir:cfg[idx].subdir||'',_postSubdir:p.subdir||null,_hasPreviewFile:this.hasPreviewFile(p)}));
             this.bpc[idx]=res;this.tpc=null;return res;
         }catch(e){return[]}
     }
@@ -123,7 +132,7 @@ class BlogEngine {
         const batches=await Promise.all([...Array(cfg.length).keys()].map(i=>this.loadPostsFromBatch(i)));
         this.apc=batches.flat();return this.apc;
     }
-    static getPostContentPath(p){const fn=p.file;const sd=p._postSubdir||p._batchSubdir||'';return sd?`posts/${this.sanitizeSubdir(sd)}/${fn}`:`posts/${fn}`}
+    static getPostContentPath(p){const sd=p._postSubdir||p._batchSubdir||'';return sd?`posts/${this.sanitizeSubdir(sd)}/${p.file}`:`posts/${p.file}`}
     static getPreviewContentPath(p){const pfn=this.getPreviewFileName(p.file);const sd=p._postSubdir||p._batchSubdir||'';return sd?`posts/${this.sanitizeSubdir(sd)}/${pfn}`:`posts/${pfn}`}
     static sanitizeSubdir(s){return s.replace(/\.\.\//g,'').replace(/\.\//g,'').replace(/^\/+/,'').replace(/\/+$/,'')}
     static removeEntryTitleTag(h){return h?h.replace(/<h1\s+class="entry-title"[^>]*>.*?<\/h1>\s*/gi,''):''}
@@ -142,5 +151,5 @@ class BlogEngine {
     static getPostsByTag(posts,tag){return posts.filter(p=>p.tags&&p.tags.includes(tag))}
     static getAllTags(posts){const s=new Set();posts.forEach(p=>{if(p.tags)p.tags.forEach(t=>s.add(t))});return Array.from(s).sort()}
     static sortPosts(posts){return posts.sort((a,b)=>{if(a.fixed==='yes'&&b.fixed!=='yes')return-1;if(a.fixed!=='yes'&&b.fixed==='yes')return 1;return b.id-a.id})}
-    static clearCache(){this.pfc=null;this.bpc={};this.apc=null;this.pcc={};this.pcct=0;this.tpc=null}
+    static clearCache(){this.pfc=null;this.bpc={};this.apc=null;this.pcc={};this.pcct=0;this.tpc=null;this.scC=null}
 }

@@ -1,0 +1,62 @@
+@media (max-width:768px){
+  .container{padding:0 2px}
+  .top-menu .container{padding:0 2px}
+  .top-menu ul li a,.top-menu ul li span.loading-text{padding:3px 7px;font-size:.7rem}
+  .mobile-menu-toggle{display:block}
+  .mobile-main-menu{display:block}
+  .horizontal-menu{display:none}
+  .main-container{flex-direction:column;align-items:stretch;gap:4px;margin:2px auto}
+  .content-area{order:0;padding:6px}
+  .hamburger{display:flex;order:-1;margin-right:0;margin-left:15px;margin-top:5px}
+  .header-top{flex-direction:row;align-items:flex-start;padding-bottom:15px}
+  .header-titles{flex:1}
+  .sidebar{position:fixed;top:0;right:-100%;width:85%;max-width:350px;min-width:280px;height:100vh;z-index:999;background:var(--bg);overflow-y:auto;padding:20px;box-shadow:-4px 0 20px rgba(0,0,0,0.2);transition:right 0.3s ease;border-radius:0}
+  .sidebar.active{right:0}
+  .sidebar-header{display:flex}
+  .sidebar-close{display:block}
+  .sidebar-widget:first-of-type{margin-top:0}
+  .sidebar-widget{margin-bottom:5px}
+  .post-card{padding:10px;margin-bottom:10px}
+  .post-card .post-image,.full-post .post-image{max-width:90%;width:90%}
+  .search-results{max-height:200px}
+  .pagination-inner{flex-wrap:wrap;gap:4px;padding:6px}
+  .pagination-btn{padding:6px 10px;font-size:.8rem;min-width:50px}
+  .page-number{width:30px;height:30px;font-size:.8rem}
+  .page-dots{width:25px;height:30px}
+  .site-subtitle{font-size:.9rem}
+  body.reader-mode .content-area{padding:15px 10px!important}
+  .top-menu ul li:hover>.submenu{display:none}
+  .top-menu ul li .submenu li:hover>.submenu{display:none}
+  .top-menu ul li .submenu li .submenu li:hover>.submenu{display:none}
+  .top-menu ul li .submenu,.top-menu ul li .submenu li .submenu,.top-menu ul li .submenu li .submenu li .submenu{position:absolute;top:100%;right:0;min-width:130px;width:auto;border-radius:0 0 var(--r) var(--r);border:1px solid var(--bdr);box-shadow:0 4px 12px rgba(0,0,0,0.1);margin:0;padding:3px 0;background:var(--bg);z-index:999}
+  .top-menu ul li .submenu li .submenu,.top-menu ul li .submenu li .submenu li .submenu{top:0;right:100%;margin-right:0}
+  .top-menu ul li .submenu.mobile-open,.top-menu ul li .submenu li .submenu.mobile-open,.top-menu ul li .submenu li .submenu li .submenu.mobile-open{display:flex}
+  .top-menu ul li .submenu li a{padding:6px 12px;font-size:.72rem;border-radius:0;margin:0;white-space:nowrap}
+  .top-menu ul li.has-submenu>a::before{content:'▼';font-size:.5rem;float:left;margin-top:4px;transition:transform 0.25s ease}
+  .top-menu ul li.has-submenu>a.open::before{transform:rotate(180deg)}
+  .top-menu ul li .submenu li.has-submenu>a::before{content:'◀';float:left;margin-top:3px}
+  body.dark-mode .top-menu ul li .submenu,body.dark-mode .top-menu ul li .submenu li .submenu,body.dark-mode .top-menu ul li .submenu li .submenu li .submenu{background:#1a1a2e;border-color:#2a2a4a;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
+  body.dark-mode .top-menu ul li .submenu li a{color:#ccc;border-bottom-color:rgba(255,255,255,0.03)}
+}
+@media (max-width:480px){
+  .container,.top-menu .container{padding:0 2px}
+  .top-menu ul li a,.top-menu ul li span.loading-text{padding:2px 5px;font-size:.65rem}
+  .mobile-menu-toggle{padding:3px 8px;font-size:.65rem}
+  .mobile-main-menu ul li a{padding:7px 10px;font-size:.85rem}
+  .mobile-main-menu ul li .submenu li a{padding:6px 10px 6px 20px;font-size:.82rem}
+  .mobile-main-menu ul li .submenu li .submenu li a{padding-right:28px;font-size:.8rem}
+  .mobile-main-menu ul li .submenu li .submenu li .submenu li a{padding-right:36px;font-size:.78rem}
+  .site-title{font-size:1.5rem}
+  .site-subtitle{font-size:.8rem}
+  .content-area{padding:4px}
+  .post-card{padding:8px;margin-bottom:8px}
+  .post-card .post-image,.full-post .post-image{max-width:95%;width:95%}
+  .post-card .post-title{font-size:1rem}
+  .post-card .post-excerpt{font-size:.95rem;line-height:1.7}
+  .pagination-inner{gap:3px;padding:5px}
+  .pagination-btn{padding:5px 8px;font-size:.75rem;min-width:45px}
+  .page-number{width:28px;height:28px;font-size:.75rem}
+  .page-numbers{gap:2px;margin:0 5px}
+  .full-post .post-title{font-size:1.3rem}
+  .full-post .post-content{font-size:.95rem}
+}

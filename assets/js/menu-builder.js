@@ -30,17 +30,6 @@ class MenuBuilder {
         }
         return h;
     }
-    static buildMenuTree(items,level=0){
-        if(!items?.length)return'';let h='';
-        items.forEach(item=>{
-            if(!item.title)return;
-            const hc=item.children&&item.children.length>0;
-            const ta=item.target==='_blank'?' target="_blank" rel="noopener noreferrer"':'';
-            if(hc&&level<3){h+=`<li class="has-submenu"><a href="#" data-menu-parent="true">${item.title}</a><ul class="submenu">`;h+=this.buildMenuTree(item.children,level+1);h+=`</ul></li>`}
-            else{h+=`<li><a href="${item.link||'#'}"${ta}>${item.title}</a></li>`}
-        });
-        return h;
-    }
     static attachMobileMenuEvents(){
         const mm=document.getElementById('mobileMenuList');if(!mm)return;
         mm.addEventListener('click',function(e){
@@ -81,24 +70,74 @@ class MenuBuilder {
         try{
             const r=await fetch(BlogEngine.acb('data/topmenu.json'));if(!r.ok){ml.innerHTML='<li><span class="loading-text">منو در دسترس نیست</span></li>';return}
             const items=await r.json();if(!items?.length){ml.innerHTML='';return}
-            let h='';
-            items.forEach(item=>{
-                const title=item.title||'',image=item.image||'',link=item.link||'',alt=item.alt||'';
-                const target=item.target==='_blank'?' target="_blank" rel="noopener noreferrer"':'';
-                if(!title&&!image)return;
-                let imageSrc='';
-                if(image){
-                    const lower=image.toLowerCase();
-                    if(/\.(jpg|jpeg|png|ico)$/i.test(lower)){imageSrc=image.startsWith('http://')||image.startsWith('https://')?image:`assets/images/${image}`}
-                }
+            ml.innerHTML=this.buildTopMenuTree(items,0);
+            this.attachTopMenuEvents();
+        }catch(e){ml.innerHTML='<li><span class="loading-text">خطا در بارگذاری</span></li>'}
+    }
+    static buildTopMenuTree(items,level=0){
+        if(!items?.length)return'';
+        let h='';
+        for(const item of items){
+            const title=item.title||'';const image=item.image||'';const link=item.link||'';const alt=item.alt||'';
+            const target=item.target==='_blank'?' target="_blank" rel="noopener noreferrer"':'';
+            const hc=item.children&&item.children.length>0;
+            if(hc&&level<3){
+                h+=`<li class="has-submenu"><a href="#" data-menu-parent="true">`;
+                if(image){const imageSrc=this.resolveTopMenuImage(image);if(imageSrc)h+=`<img src="${imageSrc}" alt="${alt}" class="top-menu-icon" loading="lazy">`;}
+                h+=`${title}</a><ul class="submenu">`;
+                h+=this.buildTopMenuTree(item.children,level+1);
+                h+=`</ul></li>`;
+            }else{
+                if(!title&&!image)continue;
+                let imageSrc='';if(image){imageSrc=this.resolveTopMenuImage(image)}
                 let content='';const tooltip=alt||'';
                 if(title&&imageSrc)content=`<img src="${imageSrc}" alt="${tooltip}" class="top-menu-icon" loading="lazy">${title}`;
                 else if(!title&&imageSrc)content=`<img src="${imageSrc}" alt="${tooltip}" class="top-menu-icon" loading="lazy">`;
                 else if(title&&!imageSrc)content=title;
                 if(content&&link)h+=`<li><a href="${link}"${target}${tooltip?` title="${tooltip}"`:''}>${content}</a></li>`;
-            });
-            ml.innerHTML=h||'';
-        }catch(e){ml.innerHTML='<li><span class="loading-text">خطا در بارگذاری</span></li>'}
+            }
+        }
+        return h;
+    }
+    static resolveTopMenuImage(image){
+        if(!image)return'';
+        const lower=image.toLowerCase();
+        if(!/\.(jpg|jpeg|png|ico)$/i.test(lower))return'';
+        if(image.startsWith('http://')||image.startsWith('https://'))return image;
+        return `assets/images/${image}`;
+    }
+    static attachTopMenuEvents(){
+        const tm=document.getElementById('topMenuList');if(!tm)return;
+        tm.addEventListener('click',function(e){
+            const tl=e.target.closest('a[data-menu-parent]');if(!tl)return;
+            if(window.innerWidth<=768){
+                e.preventDefault();e.stopPropagation();
+                const pl=tl.parentElement;const sm=pl.querySelector(':scope > .submenu');if(!sm)return;
+                const pu=pl.parentElement;
+                pu.querySelectorAll(':scope > li.has-submenu > .submenu').forEach(s=>{
+                    if(s!==sm){s.style.display='none';s.classList.remove('mobile-open');s.querySelectorAll('.submenu.mobile-open').forEach(i=>{i.style.display='none';i.classList.remove('mobile-open')});const sl=s.parentElement.querySelector('a[data-menu-parent]');if(sl)sl.classList.remove('open')}
+                });
+                if(sm.classList.contains('mobile-open')){
+                    sm.style.display='none';sm.classList.remove('mobile-open');tl.classList.remove('open');
+                    sm.querySelectorAll('.submenu.mobile-open').forEach(i=>{i.style.display='none';i.classList.remove('mobile-open')});
+                    sm.querySelectorAll('a[data-menu-parent].open').forEach(l=>l.classList.remove('open'));
+                }else{sm.style.display='flex';sm.classList.add('mobile-open');tl.classList.add('open')}
+            }
+        });
+        tm.addEventListener('click',function(e){
+            if(window.innerWidth<=768){
+                const targetLink=e.target.closest('a:not([data-menu-parent])');
+                if(targetLink){tm.querySelectorAll('.submenu.mobile-open').forEach(s=>{s.style.display='none';s.classList.remove('mobile-open')});tm.querySelectorAll('a[data-menu-parent].open').forEach(l=>l.classList.remove('open'))}
+            }
+        });
+        document.addEventListener('click',function(e){
+            if(window.innerWidth<=768){
+                if(!e.target.closest('#topMenuList')){document.querySelectorAll('#topMenuList .submenu.mobile-open').forEach(s=>{s.style.display='none';s.classList.remove('mobile-open')});document.querySelectorAll('#topMenuList a[data-menu-parent].open').forEach(l=>l.classList.remove('open'))}
+            }
+        });
+        window.addEventListener('resize',function(){
+            if(window.innerWidth>768){document.querySelectorAll('#topMenuList .submenu.mobile-open').forEach(s=>{s.style.display='';s.classList.remove('mobile-open')});document.querySelectorAll('#topMenuList a[data-menu-parent].open').forEach(l=>l.classList.remove('open'))}
+        });
     }
     static async buildToolbarScripts(){
         const widget=document.getElementById('toolbarScriptsWidget'),list=document.getElementById('toolbarScriptsList');
