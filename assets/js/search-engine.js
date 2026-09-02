@@ -1,7 +1,7 @@
 class SearchEngine {
-    constructor(){this.st=null;this.minSL=2;this.maxR=10}
+    constructor(){this.searchTimeout=null;this.minSearchLength=2;this.maxResults=10}
     async search(q){
-        if(!q||q.trim().length<this.minSL)return{results:[],total:0};
+        if(!q||q.trim().length<this.minSearchLength)return{results:[],total:0};
         const st=q.trim().toLowerCase();const results=[];
         try{
             const posts=await BlogEngine.loadAllPosts();
@@ -30,7 +30,7 @@ class SearchEngine {
             results.sort((a,b)=>b.relevance-a.relevance);
             const uniq=[];const seen=new Set();
             for(const r of results){if(!seen.has(r.url)){seen.add(r.url);uniq.push(r)}}
-            return{results:uniq.slice(0,this.maxR),total:uniq.length};
+            return{results:uniq.slice(0,this.maxResults),total:uniq.length};
         }catch(e){return{results:[],total:0,error:true}}
     }
     stripHtml(h){if(!h)return'';const d=document.createElement('div');d.innerHTML=h;return d.textContent||d.innerText||''}
@@ -41,7 +41,7 @@ class SearchEngine {
         if(!results?.length){rc.innerHTML='<div class="no-results">نتیجه‌ای یافت نشد.</div>';rc.style.display='block';return}
         let html='';
         results.forEach(r=>{const tl=r.type==='post'?'📝 مطلب':r.type==='page'?'📄 صفحه':'🏷️ برچسب';html+=`<div class="search-result-item"><a href="${r.url}" data-search-result="${r.url}"><div class="result-title">${this.highlightText(r.title,st)}</div><span class="result-type">${tl}</span>${r.type!=='tag'?`<div class="result-excerpt">${this.highlightText(r.excerpt,st)}</div>`:''}</a></div>`});
-        if(total>this.maxR)html+=`<div class="search-result-item" style="text-align:center;"><a href="?search=${encodeURIComponent(st)}" data-full-search="true">مشاهده همه ${total} نتیجه</a></div>`;
+        if(total>this.maxResults)html+=`<div class="search-result-item" style="text-align:center;"><a href="?search=${encodeURIComponent(st)}" data-full-search="true">مشاهده همه ${total} نتیجه</a></div>`;
         rc.innerHTML=html;rc.style.display='block';this.attachResultEvents(rc);
     }
     attachResultEvents(c){
