@@ -1,5 +1,463 @@
 <a rel="nofollow" href="https://drjalily.com" target="_blank"><img style="max-width: 100%;" src="https://drjalily.com/web/images/banner/728.90-white.jpg" border="0" title="دکتر سعید جلیلی" alt="پایگاه اطلاع‌رسانی دکتر سعید جلیلی" /></a>
 
+<!-- ========================================== -->
+<!-- ویجت دقیق ساعت رسمی ایران - نسخه ۱۱.۰     -->
+<!-- کاملاً واکنش‌گرا (Responsive)             -->
+<!-- ========================================== -->
+
+<div id="persian-clock-widget" dir="rtl" style="
+    background: linear-gradient(135deg, #0a192f 0%, #1b3a5c 100%);
+    color: #ffffff;
+    font-family: 'Vazirmatn', 'IRANSans', 'Tahoma', sans-serif;
+    border-radius: clamp(12px, 3vw, 24px);
+    padding: clamp(12px, 3vw, 25px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    border: 2px solid rgba(0, 180, 255, 0.3);
+    direction: rtl;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    overflow: hidden;
+">
+
+    <div id="clock-status" style="
+        font-size: clamp(8px, 1.5vw, 11px);
+        margin-bottom: clamp(8px, 2vw, 15px);
+        opacity: 0.85;
+        letter-spacing: 0.5px;
+        background: rgba(0,0,0,0.35);
+        padding: clamp(4px, 1vw, 6px) clamp(12px, 2vw, 18px);
+        border-radius: 30px;
+        display: inline-block;
+        font-weight: 500;
+        direction: rtl;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        box-sizing: border-box;
+    ">⌛ در حال همگام‌سازی...</div>
+
+    <div id="clock-time" style="
+        font-size: clamp(28px, 8vw, 56px);
+        font-weight: 900;
+        letter-spacing: clamp(2px, 0.5vw, 5px);
+        line-height: 1.2;
+        direction: ltr;
+        text-shadow: 0 5px 20px rgba(0,0,0,0.7);
+        font-family: 'Courier New', 'Vazirmatn', monospace;
+        margin: clamp(5px, 1vw, 10px) 0;
+        white-space: nowrap;
+        box-sizing: border-box;
+    ">--:--:--</div>
+
+    <div id="clock-date" style="
+        font-size: clamp(12px, 3vw, 20px);
+        font-weight: 600;
+        margin-top: clamp(5px, 1vw, 10px);
+        opacity: 0.95;
+        background: rgba(255,255,255,0.08);
+        padding: clamp(6px, 1.5vw, 10px) clamp(12px, 2vw, 20px);
+        border-radius: clamp(8px, 2vw, 12px);
+        display: inline-block;
+        backdrop-filter: blur(5px);
+        direction: rtl;
+        white-space: nowrap;
+        box-sizing: border-box;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    ">---</div>
+
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ================== تنظیمات ==================
+    const DISPLAY_UPDATE_MS = 100;
+    const CLOCK_TICK_MS = 1000;
+    const RESYNC_INTERVAL_MS = 5 * 60 * 1000; // هر ۵ دقیقه
+    const RETRY_ON_FAILURE_MS = 30 * 1000;
+    const API_TIMEOUT_MS = 5000;
+
+    const IRAN_OFFSET_MS = (3 * 60 * 60 * 1000) + (30 * 60 * 1000);
+
+    // ================== وضعیت ساعت ==================
+    let isClockRunning = false;
+    let lastSyncTime = null;
+    let elapsedSeconds = 0;
+    let tickIntervalId = null;
+    let displayIntervalId = null;
+    let syncIntervalId = null;
+
+    // ================== تنظیم واکنش‌گرایی ==================
+    function setupResponsiveBehavior() {
+        const widget = document.getElementById('persian-clock-widget');
+        const timeElement = document.getElementById('clock-time');
+        const dateElement = document.getElementById('clock-date');
+        const statusElement = document.getElementById('clock-status');
+        
+        if (!widget || !timeElement || !dateElement || !statusElement) return;
+        
+        // تابع تنظیم اندازه فونت بر اساس عرض ویجت
+        function adjustFontSizes() {
+            const widgetWidth = widget.offsetWidth;
+            
+            // محاسبه اندازه‌های مناسب بر اساس عرض ویجت
+            let timeFontSize, dateFontSize, statusFontSize, paddingSize, borderRadius;
+            
+            if (widgetWidth < 200) {
+                // ویجت بسیار کوچک
+                timeFontSize = Math.max(20, widgetWidth * 0.18);
+                dateFontSize = Math.max(9, widgetWidth * 0.07);
+                statusFontSize = Math.max(6, widgetWidth * 0.05);
+                paddingSize = Math.max(8, widgetWidth * 0.06);
+                borderRadius = Math.max(8, widgetWidth * 0.08);
+            } else if (widgetWidth < 300) {
+                // ویجت کوچک
+                timeFontSize = Math.max(24, widgetWidth * 0.15);
+                dateFontSize = Math.max(10, widgetWidth * 0.06);
+                statusFontSize = Math.max(7, widgetWidth * 0.045);
+                paddingSize = Math.max(10, widgetWidth * 0.05);
+                borderRadius = Math.max(10, widgetWidth * 0.06);
+            } else if (widgetWidth < 400) {
+                // ویجت متوسط
+                timeFontSize = Math.max(28, widgetWidth * 0.13);
+                dateFontSize = Math.max(11, widgetWidth * 0.05);
+                statusFontSize = Math.max(8, widgetWidth * 0.04);
+                paddingSize = Math.max(12, widgetWidth * 0.04);
+                borderRadius = Math.max(12, widgetWidth * 0.05);
+            } else {
+                // ویجت بزرگ (پیش‌فرض)
+                timeFontSize = 56;
+                dateFontSize = 20;
+                statusFontSize = 11;
+                paddingSize = 25;
+                borderRadius = 24;
+            }
+            
+            // اعمال اندازه‌های جدید
+            timeElement.style.fontSize = timeFontSize + 'px';
+            timeElement.style.letterSpacing = (timeFontSize * 0.09) + 'px';
+            
+            dateElement.style.fontSize = dateFontSize + 'px';
+            dateElement.style.padding = (dateFontSize * 0.5) + 'px ' + (dateFontSize * 1) + 'px';
+            
+            statusElement.style.fontSize = statusFontSize + 'px';
+            statusElement.style.padding = (statusFontSize * 0.5) + 'px ' + (statusFontSize * 1.5) + 'px';
+            
+            widget.style.padding = paddingSize + 'px';
+            widget.style.borderRadius = borderRadius + 'px';
+        }
+        
+        // اجرای اولیه
+        adjustFontSizes();
+        
+        // استفاده از ResizeObserver برای تشخیص تغییر اندازه
+        if (typeof ResizeObserver !== 'undefined') {
+            const resizeObserver = new ResizeObserver(() => {
+                adjustFontSizes();
+            });
+            resizeObserver.observe(widget);
+        } else {
+            // Fallback برای مرورگرهای قدیمی
+            window.addEventListener('resize', adjustFontSizes);
+            // همچنین هر ۲ ثانیه چک کن
+            setInterval(adjustFontSizes, 2000);
+        }
+    }
+
+    // ================== دریافت زمان از TimeAPI.io ==================
+    async function fetchTimeFromAPI() {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+            
+            const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC', {
+                signal: controller.signal,
+                cache: 'no-store',
+                mode: 'cors'
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) return null;
+            
+            const data = await response.json();
+            
+            const utcTime = Date.UTC(
+                data.year,
+                data.month - 1,
+                data.day,
+                data.hour,
+                data.minute,
+                data.seconds,
+                data.milliSeconds || 0
+            );
+            
+            if (isNaN(utcTime)) return null;
+            
+            return utcTime;
+            
+        } catch (error) {
+            console.warn('[ساعت] خطا در اتصال به TimeAPI.io:', error.message);
+            return null;
+        }
+    }
+
+    // ================== توابع ساعت داخلی ==================
+    
+    function startClock(utcTime) {
+        if (tickIntervalId) {
+            clearInterval(tickIntervalId);
+            tickIntervalId = null;
+        }
+        
+        lastSyncTime = utcTime;
+        elapsedSeconds = 0;
+        isClockRunning = true;
+        
+        tickIntervalId = setInterval(() => {
+            elapsedSeconds++;
+        }, CLOCK_TICK_MS);
+    }
+    
+    function getCurrentUTC() {
+        if (!isClockRunning || lastSyncTime === null) {
+            return null;
+        }
+        
+        return lastSyncTime + (elapsedSeconds * 1000);
+    }
+
+    // ================== تبدیل زمان ==================
+    
+    function padNumber(num, length = 2) {
+        return String(num).padStart(length, '0');
+    }
+
+    function getIranTime(utcTimestamp) {
+        const iranTimestamp = utcTimestamp + IRAN_OFFSET_MS;
+        const date = new Date(iranTimestamp);
+        
+        return {
+            hours: date.getUTCHours(),
+            minutes: date.getUTCMinutes(),
+            seconds: date.getUTCSeconds(),
+            day: date.getUTCDate(),
+            month: date.getUTCMonth() + 1,
+            year: date.getUTCFullYear(),
+            dayOfWeek: date.getUTCDay()
+        };
+    }
+
+    // ================== توابع نمایش ==================
+    
+    function formatTime(iranTime) {
+        return `${padNumber(iranTime.hours)}:${padNumber(iranTime.minutes)}:${padNumber(iranTime.seconds)}`;
+    }
+
+    function toPersianDigits(str) {
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return String(str).replace(/\d/g, (digit) => persianDigits[parseInt(digit)]);
+    }
+
+    function formatPersianDate(utcTimestamp) {
+        const iranDate = new Date(utcTimestamp + IRAN_OFFSET_MS);
+        
+        try {
+            const parts = new Intl.DateTimeFormat('fa-IR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                timeZone: 'Asia/Tehran'
+            }).formatToParts(iranDate);
+            
+            let weekday = '';
+            let day = '';
+            let month = '';
+            let year = '';
+            
+            for (const part of parts) {
+                switch (part.type) {
+                    case 'weekday':
+                        weekday = part.value;
+                        break;
+                    case 'day':
+                        day = part.value;
+                        break;
+                    case 'month':
+                        month = part.value;
+                        break;
+                    case 'year':
+                        year = part.value;
+                        break;
+                }
+            }
+            
+            return `${weekday}، ${day} ${month} ${year}`;
+            
+        } catch (e) {
+            return formatPersianDateManual(iranDate);
+        }
+    }
+
+    function formatPersianDateManual(date) {
+        const gYear = date.getUTCFullYear();
+        const gMonth = date.getUTCMonth() + 1;
+        const gDay = date.getUTCDate();
+        
+        const gDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        
+        let gDayNo = 0;
+        for (let i = 0; i < gMonth - 1; i++) {
+            gDayNo += gDaysInMonth[i];
+        }
+        gDayNo += gDay;
+        
+        const isLeapGregorian = (gYear % 4 === 0 && gYear % 100 !== 0) || (gYear % 400 === 0);
+        if (isLeapGregorian && gMonth > 2) {
+            gDayNo++;
+        }
+        
+        const jYear = gYear - 621;
+        let jDayNo = gDayNo - 79;
+        
+        if (jDayNo <= 0) {
+            jDayNo += 365;
+            // سال کبیسه شمسی
+        }
+        
+        const jDaysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+        
+        let jMonth = 0;
+        let jDay = jDayNo;
+        
+        if (jDayNo > 186) {
+            jDay -= 186;
+            jMonth = 6;
+        }
+        
+        while (jDay > jDaysInMonth[jMonth]) {
+            jDay -= jDaysInMonth[jMonth];
+            jMonth++;
+            if (jMonth > 11) break;
+        }
+        
+        jMonth += 1;
+        
+        const dayNames = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+        const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+        
+        const weekday = dayNames[date.getUTCDay()];
+        const dayStr = toPersianDigits(jDay);
+        const monthStr = monthNames[jMonth - 1];
+        const yearStr = toPersianDigits(jYear);
+        
+        return `${weekday}، ${dayStr} ${monthStr} ${yearStr}`;
+    }
+
+    // ================== به‌روزرسانی نمایش ==================
+    
+    function updateDisplay() {
+        const currentUTC = getCurrentUTC();
+        
+        if (currentUTC === null) {
+            return;
+        }
+        
+        const timeElement = document.getElementById('clock-time');
+        const dateElement = document.getElementById('clock-date');
+        
+        const iranTime = getIranTime(currentUTC);
+        
+        if (timeElement) {
+            timeElement.textContent = formatTime(iranTime);
+        }
+        
+        if (dateElement) {
+            dateElement.textContent = formatPersianDate(currentUTC);
+        }
+    }
+
+    // ================== همگام‌سازی ==================
+    
+    async function syncTime() {
+        const statusElement = document.getElementById('clock-status');
+        if (!statusElement) return;
+        
+        const apiTime = await fetchTimeFromAPI();
+        
+        if (apiTime) {
+            startClock(apiTime);
+            statusElement.textContent = '✅ همگام با TimeAPI.io';
+            
+            if (syncIntervalId) {
+                clearInterval(syncIntervalId);
+                syncIntervalId = null;
+            }
+            
+            syncIntervalId = setInterval(async () => {
+                await syncTime();
+            }, RESYNC_INTERVAL_MS);
+            
+        } else {
+            if (isClockRunning) {
+                statusElement.textContent = '⚠️ قطع ارتباط - ادامه با ساعت داخلی';
+            } else {
+                statusElement.textContent = '⚠️ خطا در دریافت زمان - تلاش مجدد...';
+            }
+            
+            if (syncIntervalId) {
+                clearInterval(syncIntervalId);
+            }
+            syncIntervalId = setInterval(async () => {
+                await syncTime();
+            }, RETRY_ON_FAILURE_MS);
+        }
+    }
+
+    // ================== راه‌اندازی اولیه ==================
+    
+    async function initialize() {
+        // تنظیم رفتار واکنش‌گرا
+        setupResponsiveBehavior();
+        
+        // همگام‌سازی اولیه
+        await syncTime();
+        
+        // شروع نمایش مداوم
+        if (displayIntervalId) {
+            clearInterval(displayIntervalId);
+        }
+        displayIntervalId = setInterval(updateDisplay, DISPLAY_UPDATE_MS);
+        
+        if (!isClockRunning) {
+            setTimeout(async () => {
+                await syncTime();
+            }, 5000);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+
+})();
+</script>
+
+<!-- ========================================== -->
+<!-- پایان ویجت ساعت رسمی ایران              -->
+<!-- ========================================== -->
+
 <!-- OghatSharee by www.1abzar.com ---><script type="text/javascript" src="https://1abzar.ir/abzar/tools/azan/v2/?mod=mod3&shahr=4-3"></script><div style="display:none"><h2><a href="https://www.1abzar.com/abzar/azan2.php">اوقات شرعی</a></h2></div><!-- OghatSharee by www.1abzar.com --->
 
 <!-- Date Converter by www.1abzar.com ---><script type="text/javascript" src="https://1abzar.ir/abzar/tools/convert-date/?color=333333&bg=F4EFE8&kc=EDAB55&kadr=1"></script><div style="display:none"><h3><a href="https://www.1abzar.com/abzar/convert-date.php">&#1578;&#1576;&#1583;&#1740;&#1604; &#1578;&#1575;&#1585;&#1740;&#1582;</a></h3></div><!-- Date Converter by www.1abzar.com --->
