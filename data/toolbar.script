@@ -9,9 +9,4 @@
 <!-- Statistics by www.1abzar.com --->
 
 
-<a href="https://time.is/Tehran" id="time_is_link" rel="nofollow">زمان در تهران:</a>
-<span id="Tehran_z442"></span>
-<script src="//widget.time.is/fa.js"></script>
-<script>
-time_is_widget.init({Tehran_z442:{template:"TIME<br>DATE<br>SUN", date_format:"dayname, monthname dnum, year, week", sun_format:"طلوع آفتاب: srhour:srminute غروب آفتاب: sshour:ssminute<br>طول روز: dlhoursساعت dlminutesدقیقه", coords:"35.6943900,51.4215100"}});
-</script>
+<a href="https://time.is/Tehran" id="time_is_link" rel="nofollow">زمان در تهران:</a><span id="Tehran_z442"></span><script src="//widget.time.is/fa.js"></script><script>time_is_widget.init({Tehran_z442:{template:"TIME<br>DATE<br>SUN", date_format:"dayname, monthname dnum, year, week", sun_format:"طلوع آفتاب: srhour:srminute غروب آفتاب: sshour:ssminute<br>طول روز: dlhoursساعت dlminutesدقیقه", coords:"35.6943900,51.4215100"}});</script>
